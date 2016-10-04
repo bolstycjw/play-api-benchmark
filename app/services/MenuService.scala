@@ -16,20 +16,54 @@ class MenuService @Inject()(menuRepository: MenuRepository,
                             variantRepository: VariantRepository,
                             itemImageRepository: ItemImageRepository) {
   def retrieveMenu(menuId: String): Future[MenuDto] = {
-    for {
-      categoryRows <- categoryRepository.getByMenu(menuId)
-      itemRows <- itemRepository.getByCategories(categoryRows map { _.id })
-      subitemRows <- subitemRepository.getByItems(itemRows map { _._2.id })
-      subitemVariantRows <- variantRepository.getBySubitems(subitemRows map { _._2.id })
-      variantRows <- variantRepository.getByItems(itemRows map { _._2.id })
-      itemImageRows <- itemImageRepository.getByItems(itemRows map { _._2.id })
+    val categoryRowsFuture = categoryRepository.getByMenu(menuId)
 
-      variantDtos <- Future { variantRows map { VariantDto.toItemVariantDto } }
-      subitemVariantDtos <- Future { subitemVariantRows map { s => VariantDto.toSubitemVariantDto(s._1, s._2) } }
-      subitemDtos <- Future { subitemRows map { SubitemDto.toSubitemDto(_, subitemVariantDtos) } }
-      itemDtos <- Future { itemRows map { ItemDto.toItemDto(_, subitemDtos, variantDtos, itemImageRows) } }
-      categoryDtos <- Future { categoryRows map { CategoryDto.toCategoryDto(_, itemDtos) } }
-      menuDto <- Future { MenuDto(categoryDtos) }
-    } yield menuDto
+    // ItemDtos
+    val itemRows = categoryRowsFuture flatMap { tags =>
+      itemRepository.getByCategories(tags map { _.id })
+    }
+    val itemDtosFuture = itemRows flatMap { items =>
+      val itemIds = items.map(_._2.id)
+
+      // VariantDtos
+      val variantRowsFuture = variantRepository.getByItems(itemIds)
+      val variantDtosFuture = variantRowsFuture map {
+        _.map(VariantDto.toItemVariantDto)
+      }
+
+      // SubitemDtos
+      val subitemDtosFuture = for {
+        subitemRows <- subitemRepository.getByItems(itemIds)
+        subitemVariantRows <- variantRepository.getBySubitems(
+          subitemRows.map(_._2.id))
+      } yield {
+        val subitemVariantDtos = subitemVariantRows map { s =>
+          VariantDto.toSubitemVariantDto(s._1, s._2)
+        }
+        subitemRows map { SubitemDto.toSubitemDto(_, subitemVariantDtos) }
+      }
+
+      // Build ItemDtos with VariantDtos and SubitemDtos
+      for {
+        itemImageRows <- itemImageRepository.getByItems(itemIds)
+        variantDtos <- variantDtosFuture
+        subitemDtos <- subitemDtosFuture
+      } yield {
+        items map {
+          ItemDto.toItemDto(_, subitemDtos, variantDtos, itemImageRows)
+        }
+      }
+    }
+
+    // Build CategoryDtos and MenuDto
+    for {
+      categoryRows <- categoryRowsFuture
+      itemDtos <- itemDtosFuture
+    } yield {
+      val categoryDtos = categoryRows map {
+        CategoryDto.toCategoryDto(_, itemDtos)
+      }
+      MenuDto(categoryDtos)
+    }
   }
 }
