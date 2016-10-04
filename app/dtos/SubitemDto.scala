@@ -15,7 +15,7 @@ case class SubitemDto(
 )
 
 object SubitemDto {
-  def toSubitemDto(subitemRow: (ItemSubitemRow, SubitemRow), variantDtos: ParSeq[VariantDto]): SubitemDto = {
+  def toSubitemDto(subitemRow: (ItemSubitemRow, SubitemRow), variantDtos: Seq[VariantDto]): SubitemDto = {
     SubitemDto(
       id = subitemRow._2.id,
       itemId = subitemRow._1.itemId.getOrElse(""),
@@ -23,7 +23,7 @@ object SubitemDto {
       minimumQuantity = subitemRow._2.minimumQuantity,
       maximumQuantity = subitemRow._2.maximumQuantity,
       selectableOnce = subitemRow._2.selectableOnce,
-      variants = variantDtos filter { _.subitemId.getOrElse("") == subitemRow._2.id } seq
+      variants = variantDtos filter { _.subitemId.getOrElse("") == subitemRow._2.id }
     )
   }
 }

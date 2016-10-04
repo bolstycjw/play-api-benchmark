@@ -24,10 +24,10 @@ class MenuService @Inject()(menuRepository: MenuRepository,
       variantRows <- variantRepository.getByItems(itemRows map { _._2.id })
       itemImageRows <- itemImageRepository.getByItems(itemRows map { _._2.id })
 
-      variantDtos <- Future { variantRows.par map { VariantDto.toItemVariantDto } }
-      subitemVariantDtos <- Future { subitemVariantRows.par map { s => VariantDto.toSubitemVariantDto(s._1, s._2) } }
-      subitemDtos <- Future { subitemRows.par map { SubitemDto.toSubitemDto(_, subitemVariantDtos) } }
-      itemDtos <- Future { itemRows.par map { ItemDto.toItemDto(_, subitemDtos, variantDtos, itemImageRows) } }
+      variantDtos <- Future { variantRows map { VariantDto.toItemVariantDto } }
+      subitemVariantDtos <- Future { subitemVariantRows map { s => VariantDto.toSubitemVariantDto(s._1, s._2) } }
+      subitemDtos <- Future { subitemRows map { SubitemDto.toSubitemDto(_, subitemVariantDtos) } }
+      itemDtos <- Future { itemRows map { ItemDto.toItemDto(_, subitemDtos, variantDtos, itemImageRows) } }
       categoryDtos <- Future { categoryRows map { CategoryDto.toCategoryDto(_, itemDtos) } }
       menuDto <- Future { MenuDto(categoryDtos) }
     } yield menuDto

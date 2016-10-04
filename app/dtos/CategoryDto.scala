@@ -13,13 +13,13 @@ case class CategoryDto(
 )
 
 object CategoryDto {
-  def toCategoryDto(categoryRow: CategoryRow, itemDtos: ParSeq[ItemDto]) = {
+  def toCategoryDto(categoryRow: CategoryRow, itemDtos: Seq[ItemDto]) = {
     CategoryDto(
       id = categoryRow.id,
       name = categoryRow.name,
       description = categoryRow.description,
       status = categoryRow.displayToPublic,
-      items = itemDtos filter { _.tagId == categoryRow.id } seq
+      items = itemDtos filter { _.tagId == categoryRow.id }
     )
   }
 }
