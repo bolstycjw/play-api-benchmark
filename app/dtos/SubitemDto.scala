@@ -21,7 +21,7 @@ object SubitemDto {
       minimumQuantity = subitemRow._2.minimumQuantity,
       maximumQuantity = subitemRow._2.maximumQuantity,
       selectableOnce = subitemRow._2.selectableOnce,
-      variants = variantDtos filter { _.subitemId.getOrElse("") == subitemRow._2.id }
+      variants = variantDtos
     )
   }
 }

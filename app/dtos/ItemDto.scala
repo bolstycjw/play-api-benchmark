@@ -16,13 +16,13 @@ case class ItemDto(
 object ItemDto {
   def toItemDto(itemRow: (CategoryItemRow, ItemRow),
                 subitemDtos: Seq[SubitemDto],
-                variantDtos: Seq[VariantDto], itemImages: Seq[ItemImageRow]): ItemDto = {
+                variantDtos: Seq[VariantDto], itemImages: Seq[Option[String]]): ItemDto = {
     ItemDto(
       id = itemRow._2.id,
       tagId = itemRow._1.tagId.getOrElse(""),
-      subitems = subitemDtos filter { _.itemId == itemRow._2.id },
-      variants = variantDtos filter {_.itemId.getOrElse("") == itemRow._2.id },
-      images = itemImages filter {_.itemId.getOrElse("") == itemRow._2.id } map { _.filename }
+      subitems = subitemDtos,
+      variants = variantDtos,
+      images = itemImages
     )
   }
 }

@@ -17,7 +17,7 @@ object CategoryDto {
       name = categoryRow.name,
       description = categoryRow.description,
       status = categoryRow.displayToPublic,
-      items = itemDtos filter { _.tagId == categoryRow.id }
+      items = itemDtos
     )
   }
 }
