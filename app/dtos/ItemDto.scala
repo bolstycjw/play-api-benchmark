@@ -2,8 +2,6 @@ package dtos
 
 import models.database.Tables.{CategoryItemRow, ItemImageRow, ItemRow}
 
-import scala.collection.parallel.ParSeq
-
 case class ItemDto(
     id: String,
     tagId: String,

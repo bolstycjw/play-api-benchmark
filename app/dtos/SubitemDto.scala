@@ -2,8 +2,6 @@ package dtos
 
 import models.database.Tables.{ItemSubitemRow, SubitemRow}
 
-import scala.collection.parallel.ParSeq
-
 case class SubitemDto(
     id: String,
     itemId: String,

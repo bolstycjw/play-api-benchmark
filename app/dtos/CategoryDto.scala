@@ -2,8 +2,6 @@ package dtos
 
 import models.database.Tables.CategoryRow
 
-import scala.collection.parallel.ParSeq
-
 case class CategoryDto(
     id: String,
     name: Option[String] = None,
