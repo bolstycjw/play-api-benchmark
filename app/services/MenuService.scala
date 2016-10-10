@@ -6,7 +6,6 @@ import dtos._
 import models._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.collection.mutable
 import scala.concurrent.Future
 
 @Singleton
@@ -17,6 +16,14 @@ class MenuService @Inject()(menuRepository: MenuRepository,
                             variantRepository: VariantRepository,
                             itemImageRepository: ItemImageRepository) {
   def retrieveMenu(menuId: String): Future[MenuDto] = {
+    def assignToMap[A, B](as: Seq[A])(f: A => String)(bs: Seq[B])(g: B => String): Map[String, Seq[B]] = {
+      import scala.collection.mutable.ListBuffer
+
+      val cs = as.map(f(_) -> new ListBuffer[B]).toMap
+      bs foreach { b => cs(g(b)) += b}
+      cs mapValues { _.toList }
+    }
+
     val categoryRowsFuture = categoryRepository.getByMenu(menuId)
 
     // ItemDtos
@@ -43,11 +50,8 @@ class MenuService @Inject()(menuRepository: MenuRepository,
         val subitemVariantDtos = subitemVariantRows map { s =>
           VariantDto.toSubitemVariantDto(s._1, s._2)
         }
-        val subitemVariantLists =
-          subitemRows.map(_._2.id -> new mutable.ListBuffer[VariantDto]).toMap
-        subitemVariantDtos.foreach { dto =>
-          subitemVariantLists(dto.subitemId.getOrElse("")) += dto
-        }
+
+        val subitemVariantLists = assignToMap(subitemRows)(_._2.id)(subitemVariantDtos)(_.subitemId.getOrElse(""))
         subitemRows map { subitemRow =>
           val subitemId = subitemRow._2.id
           SubitemDto.toSubitemDto(subitemRow, subitemVariantLists(subitemId))
@@ -60,23 +64,12 @@ class MenuService @Inject()(menuRepository: MenuRepository,
         variantDtos <- variantDtosFuture
         subitemDtos <- subitemDtosFuture
       } yield {
-        val itemImageLists =
-          items.map(_._2.id -> new mutable.ListBuffer[Option[String]]).toMap
-        itemImageRows.foreach { dto =>
-          itemImageLists(dto.itemId.getOrElse("")) += dto.filename
-        }
 
-        val subitemLists =
-          items.map(_._2.id -> new mutable.ListBuffer[SubitemDto]).toMap
-        subitemDtos.foreach { dto =>
-          subitemLists(dto.itemId) += dto
-        }
+        def assignToItemsMap[A](as: Seq[A])(f: A => String) = assignToMap(items)(_._2.id)(as)(f)
 
-        val variantLists =
-          items.map(_._2.id -> new mutable.ListBuffer[VariantDto]).toMap
-        variantDtos.foreach { dto =>
-          variantLists(dto.itemId.getOrElse("")) += dto
-        }
+        val itemImageLists = assignToItemsMap(itemImageRows)(_.itemId.getOrElse(""))
+        val subitemLists = assignToItemsMap(subitemDtos)(_.itemId)
+        val variantLists = assignToItemsMap(variantDtos)(_.itemId.getOrElse(""))
 
         items map { item =>
           val itemId = item._2.id
@@ -93,11 +86,7 @@ class MenuService @Inject()(menuRepository: MenuRepository,
       categoryRows <- categoryRowsFuture
       itemDtos <- itemDtosFuture
     } yield {
-      val itemLists =
-        categoryRows.map(_.id -> new mutable.ListBuffer[ItemDto]).toMap
-      itemDtos.foreach { dto =>
-        itemLists(dto.tagId) += dto
-      }
+      val itemLists = assignToMap(categoryRows)(_.id)(itemDtos)(_.tagId)
 
       val categoryDtos = categoryRows map { tag =>
         CategoryDto.toCategoryDto(tag, itemLists(tag.id))
