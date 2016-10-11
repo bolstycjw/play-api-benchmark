@@ -3,6 +3,7 @@ package models
 import javax.inject.{Inject, Singleton}
 
 import models.database.Tables._
+import models.database.{ItemSubitemRow, SubitemRow}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 

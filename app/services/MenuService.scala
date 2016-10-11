@@ -9,37 +9,36 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.concurrent.Future
 
 @Singleton
-class MenuService @Inject()(menuRepository: MenuRepository,
-                            categoryRepository: CategoryRepository,
+class MenuService @Inject()(categoryRepository: CategoryRepository,
                             itemRepository: ItemRepository,
                             subitemRepository: SubitemRepository,
                             variantRepository: VariantRepository,
                             itemImageRepository: ItemImageRepository) {
   def retrieveMenu(menuId: String): Future[MenuDto] = {
-    def assignToMap[A, B](as: Seq[A])(f: A => String)(bs: Seq[B])(g: B => String): Map[String, Seq[B]] = {
+    def assignToMap[A, B](as: Seq[A])(f: A => String)(bs: Seq[B])(
+        g: B => String): Map[String, Seq[B]] = {
       import scala.collection.mutable.ListBuffer
 
       val cs = as.map(f(_) -> new ListBuffer[B]).toMap
-      bs foreach { b => cs(g(b)) += b}
+      bs foreach { b =>
+        cs(g(b)) += b
+      }
       cs mapValues { _.toList }
     }
 
     val categoryRowsFuture = categoryRepository.getByMenu(menuId)
 
     // ItemDtos
-    val itemRows = categoryRowsFuture flatMap { tags =>
+    val itemRowsFuture = categoryRowsFuture flatMap { tags =>
       itemRepository.getByCategories(tags map {
         _.id
       })
     }
-    val itemDtosFuture = itemRows flatMap { items =>
-      val itemIds = items.map(_._2.id)
+    val itemDtosFuture = itemRowsFuture flatMap { itemRows =>
+      val itemIds = itemRows.map(_._2.id)
 
       // VariantDtos
       val variantRowsFuture = variantRepository.getByItems(itemIds)
-      val variantDtosFuture = variantRowsFuture map {
-        _.map(VariantDto.toItemVariantDto)
-      }
 
       // SubitemDtos
       val subitemDtosFuture = for {
@@ -47,36 +46,37 @@ class MenuService @Inject()(menuRepository: MenuRepository,
         subitemVariantRows <- variantRepository.getBySubitems(
           subitemRows.map(_._2.id))
       } yield {
-        val subitemVariantDtos = subitemVariantRows map { s =>
-          VariantDto.toSubitemVariantDto(s._1, s._2)
-        }
-
-        val subitemVariantLists = assignToMap(subitemRows)(_._2.id)(subitemVariantDtos)(_.subitemId.getOrElse(""))
+        val subitemVariantLists = assignToMap(subitemRows)(_._2.id)(
+          subitemVariantRows)(_._1.subitemId.getOrElse(""))
         subitemRows map { subitemRow =>
-          val subitemId = subitemRow._2.id
-          SubitemDto.toSubitemDto(subitemRow, subitemVariantLists(subitemId))
+          val (itemSubitem, subitem) = subitemRow
+          (itemSubitem.itemId,
+           SubitemDto(subitem, subitemVariantLists(subitem.id).map(_._2)))
         }
       }
 
       // Build ItemDtos with VariantDtos and SubitemDtos
       for {
         itemImageRows <- itemImageRepository.getByItems(itemIds)
-        variantDtos <- variantDtosFuture
+        variantRows <- variantRowsFuture
         subitemDtos <- subitemDtosFuture
       } yield {
 
-        def assignToItemsMap[A](as: Seq[A])(f: A => String) = assignToMap(items)(_._2.id)(as)(f)
+        def assignToItemsMap[A](as: Seq[A])(f: A => String) =
+          assignToMap(itemRows)(_._2.id)(as)(f)
 
-        val itemImageLists = assignToItemsMap(itemImageRows)(_.itemId.getOrElse(""))
-        val subitemLists = assignToItemsMap(subitemDtos)(_.itemId)
-        val variantLists = assignToItemsMap(variantDtos)(_.itemId.getOrElse(""))
+        val itemImageLists =
+          assignToItemsMap(itemImageRows)(_.itemId.getOrElse(""))
+        val subitemLists = assignToItemsMap(subitemDtos)(_._1.getOrElse(""))
+        val variantLists =
+          assignToItemsMap(variantRows)(_.itemId.getOrElse(""))
 
-        items map { item =>
-          val itemId = item._2.id
-          ItemDto.toItemDto(item,
-                            subitemLists(itemId),
-                            variantLists(itemId),
-                            itemImageLists(itemId))
+        itemRows map { itemRow =>
+          val (categoryItem, item) = itemRow
+          (categoryItem.tagId, ItemDto(item,
+                  variantLists(item.id),
+                  subitemLists(item.id).map(_._2),
+                  itemImageLists(item.id).map(_.filename)))
         }
       }
     }
@@ -86,10 +86,10 @@ class MenuService @Inject()(menuRepository: MenuRepository,
       categoryRows <- categoryRowsFuture
       itemDtos <- itemDtosFuture
     } yield {
-      val itemLists = assignToMap(categoryRows)(_.id)(itemDtos)(_.tagId)
+      val itemLists = assignToMap(categoryRows)(_.id)(itemDtos)(_._1.getOrElse(""))
 
       val categoryDtos = categoryRows map { tag =>
-        CategoryDto.toCategoryDto(tag, itemLists(tag.id))
+        CategoryDto(tag, itemLists(tag.id).map(_._2))
       }
       MenuDto(categoryDtos)
     }

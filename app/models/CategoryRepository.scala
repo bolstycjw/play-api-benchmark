@@ -2,6 +2,7 @@ package models
 
 import javax.inject.{Inject, Singleton}
 
+import models.database.CategoryRow
 import models.database.Tables._
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
@@ -16,13 +17,7 @@ class CategoryRepository @Inject()(dbConfigProvider: DatabaseConfigProvider) {
   import driver.api._
 
   def getByMenu(menuId: String): Future[Seq[CategoryRow]] = {
-    val categoriesQuery = for {
-      (_, category) <- Menu
-        .filter(_.id === menuId)
-        .join(Category)
-        .on(_.id === _.menuId)
-    } yield category
-
+    val categoriesQuery = Category.filter(_.menuId === menuId)
     db.run(categoriesQuery.result)
   }
 }

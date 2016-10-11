@@ -23,7 +23,7 @@ class MenuController @Inject()(menuService: MenuService)
   def menu(id: String) = Action.async {
     val menuDtoFuture = menuService.retrieveMenu(id)
     menuDtoFuture map { result =>
-      Ok(Json.prettyPrint(Json.obj("status" -> "Ok", "menus" -> Json.toJson(result))))
+      Ok(Json.obj("status" -> "Ok", "menus" -> Json.toJson(result)))
     }
   }
 }
