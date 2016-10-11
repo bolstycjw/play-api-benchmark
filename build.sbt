@@ -14,7 +14,5 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "6.0.4",
   "com.typesafe.play" %% "play-slick" % "2.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
-  "com.chuusai"        %% "shapeless" % "2.3.1",
-  "io.underscore"      %% "slickless" % "0.3.0"
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0"
 )
-

@@ -10,6 +10,8 @@ object Tables extends {
 trait Tables {
   val profile: slick.driver.JdbcProfile
   import profile.api._
+  import com.github.tototoshi.slick.MySQLJodaSupport._
+  import org.joda.time.DateTime
   import slick.model.ForeignKeyAction
   import slick.collection.heterogeneous._
   import slick.collection.heterogeneous.syntax._
@@ -38,11 +40,11 @@ trait Tables {
    *  @param activatedStartDate Database column activated_start_date SqlType(DATETIME), Default(None)
    *  @param freeCartStartDate Database column free_cart_start_date SqlType(DATETIME), Default(None)
    *  @param country Database column country SqlType(VARCHAR), Length(255,true), Default(Some(Singapore)) */
-  case class AccountRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, name: Option[String] = Some(""), maxUsers: Option[Int] = None, maxMenus: Option[Int] = Some(1), maxStores: Option[Int] = Some(1), startDate: Option[java.sql.Timestamp] = None, endDate: Option[java.sql.Timestamp] = None, gmtOffset: Option[Float] = Some(8.0F), activatedStartDate: Option[java.sql.Timestamp] = None, freeCartStartDate: Option[java.sql.Timestamp] = None, country: Option[String] = Some("Singapore"))
+  case class AccountRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, name: Option[String] = Some(""), maxUsers: Option[Int] = None, maxMenus: Option[Int] = Some(1), maxStores: Option[Int] = Some(1), startDate: Option[DateTime] = None, endDate: Option[DateTime] = None, gmtOffset: Option[Float] = Some(8.0F), activatedStartDate: Option[DateTime] = None, freeCartStartDate: Option[DateTime] = None, country: Option[String] = Some("Singapore"))
   /** GetResult implicit for fetching AccountRow objects using plain SQL queries */
-  implicit def GetResultAccountRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[AccountRow] = GR{
+  implicit def GetResultAccountRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[AccountRow] = GR{
     prs => import prs._
-    AccountRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Float], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String]))
+    AccountRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[DateTime], <<?[DateTime], <<?[Float], <<?[DateTime], <<?[DateTime], <<?[String]))
   }
   /** Table description of table account. Objects of this class serve as prototypes for rows in queries. */
   class Account(_tableTag: Tag) extends Table[AccountRow](_tableTag, "account") {
@@ -59,9 +61,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column name SqlType(VARCHAR), Length(255,true), Default(Some()) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(Some("")))
     /** Database column max_users SqlType(INT), Default(None) */
@@ -71,15 +73,15 @@ trait Tables {
     /** Database column max_stores SqlType(INT), Default(Some(1)) */
     val maxStores: Rep[Option[Int]] = column[Option[Int]]("max_stores", O.Default(Some(1)))
     /** Database column start_date SqlType(DATETIME), Default(None) */
-    val startDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("start_date", O.Default(None))
+    val startDate: Rep[Option[DateTime]] = column[Option[DateTime]]("start_date", O.Default(None))
     /** Database column end_date SqlType(DATETIME), Default(None) */
-    val endDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("end_date", O.Default(None))
+    val endDate: Rep[Option[DateTime]] = column[Option[DateTime]]("end_date", O.Default(None))
     /** Database column gmt_offset SqlType(FLOAT), Default(Some(8.0)) */
     val gmtOffset: Rep[Option[Float]] = column[Option[Float]]("gmt_offset", O.Default(Some(8.0F)))
     /** Database column activated_start_date SqlType(DATETIME), Default(None) */
-    val activatedStartDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("activated_start_date", O.Default(None))
+    val activatedStartDate: Rep[Option[DateTime]] = column[Option[DateTime]]("activated_start_date", O.Default(None))
     /** Database column free_cart_start_date SqlType(DATETIME), Default(None) */
-    val freeCartStartDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("free_cart_start_date", O.Default(None))
+    val freeCartStartDate: Rep[Option[DateTime]] = column[Option[DateTime]]("free_cart_start_date", O.Default(None))
     /** Database column country SqlType(VARCHAR), Length(255,true), Default(Some(Singapore)) */
     val country: Rep[Option[String]] = column[Option[String]]("country", O.Length(255,varying=true), O.Default(Some("Singapore")))
   }
@@ -95,11 +97,11 @@ trait Tables {
    *  @param accountId Database column account_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param permissionId Database column permission_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param version Database column version SqlType(INT), Default(None) */
-  case class AccountPermissionRow(id: String, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, accountId: Option[String] = None, permissionId: Option[String] = None, version: Option[Int] = None)
+  case class AccountPermissionRow(id: String, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, accountId: Option[String] = None, permissionId: Option[String] = None, version: Option[Int] = None)
   /** GetResult implicit for fetching AccountPermissionRow objects using plain SQL queries */
-  implicit def GetResultAccountPermissionRow(implicit e0: GR[String], e1: GR[Option[String]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Option[Int]]): GR[AccountPermissionRow] = GR{
+  implicit def GetResultAccountPermissionRow(implicit e0: GR[String], e1: GR[Option[String]], e2: GR[Option[DateTime]], e3: GR[Option[Int]]): GR[AccountPermissionRow] = GR{
     prs => import prs._
-    AccountPermissionRow.tupled((<<[String], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int]))
+    AccountPermissionRow.tupled((<<[String], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int]))
   }
   /** Table description of table account_permission. Objects of this class serve as prototypes for rows in queries. */
   class AccountPermission(_tableTag: Tag) extends Table[AccountPermissionRow](_tableTag, "account_permission") {
@@ -114,9 +116,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column account_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val accountId: Rep[Option[String]] = column[Option[String]]("account_id", O.Length(32,varying=true), O.Default(None))
     /** Database column permission_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -149,11 +151,11 @@ trait Tables {
    *  @param createdOn Database column created_on SqlType(DATETIME), Default(None)
    *  @param updatedOn Database column updated_on SqlType(DATETIME), Default(None)
    *  @param autoCompleteAddress Database column auto_complete_address SqlType(VARCHAR), Length(255,true), Default(None) */
-  case class AddressRow(id: String, address: Option[String] = None, addressTwo: Option[String] = None, city: Option[String] = None, state: Option[String] = None, postal: Option[String] = None, latitude: Option[Float] = None, longitude: Option[Float] = None, country: Option[String] = None, customerId: Option[String] = None, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, autoCompleteAddress: Option[String] = None)
+  case class AddressRow(id: String, address: Option[String] = None, addressTwo: Option[String] = None, city: Option[String] = None, state: Option[String] = None, postal: Option[String] = None, latitude: Option[Float] = None, longitude: Option[Float] = None, country: Option[String] = None, customerId: Option[String] = None, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, autoCompleteAddress: Option[String] = None)
   /** GetResult implicit for fetching AddressRow objects using plain SQL queries */
-  implicit def GetResultAddressRow(implicit e0: GR[String], e1: GR[Option[String]], e2: GR[Option[Float]], e3: GR[Option[Int]], e4: GR[Option[java.sql.Timestamp]]): GR[AddressRow] = GR{
+  implicit def GetResultAddressRow(implicit e0: GR[String], e1: GR[Option[String]], e2: GR[Option[Float]], e3: GR[Option[Int]], e4: GR[Option[DateTime]]): GR[AddressRow] = GR{
     prs => import prs._
-    AddressRow.tupled((<<[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String]))
+    AddressRow.tupled((<<[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String]))
   }
   /** Table description of table address. Objects of this class serve as prototypes for rows in queries. */
   class Address(_tableTag: Tag) extends Table[AddressRow](_tableTag, "address") {
@@ -188,9 +190,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column auto_complete_address SqlType(VARCHAR), Length(255,true), Default(None) */
     val autoCompleteAddress: Rep[Option[String]] = column[Option[String]]("auto_complete_address", O.Length(255,varying=true), O.Default(None))
 
@@ -220,13 +222,13 @@ trait Tables {
    *  @param dayInWeek Database column day_in_week SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param muteUntil Database column mute_until SqlType(DATETIME), Default(None)
    *  @param productType Database column product_type SqlType(INT), Default(None) */
-  case class CategoryRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, description: Option[String] = None, displayPosition: Option[Int] = None, displayToPublic: Option[Int] = None, availableType: Option[Int] = None, startDateTime: Option[java.sql.Timestamp] = None, endDateTime: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, name: Option[String] = None, collectionStartDate: Option[java.sql.Timestamp] = None, collectionEndDate: Option[java.sql.Timestamp] = None, dayInWeek: Option[String] = None, muteUntil: Option[java.sql.Timestamp] = None, productType: Option[Int] = None)
+  case class CategoryRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, description: Option[String] = None, displayPosition: Option[Int] = None, displayToPublic: Option[Int] = None, availableType: Option[Int] = None, startDateTime: Option[DateTime] = None, endDateTime: Option[DateTime] = None, menuId: Option[String] = None, name: Option[String] = None, collectionStartDate: Option[DateTime] = None, collectionEndDate: Option[DateTime] = None, dayInWeek: Option[String] = None, muteUntil: Option[DateTime] = None, productType: Option[Int] = None)
   /** GetResult implicit for fetching CategoryRow objects using plain SQL queries */
-  implicit def GetResultCategoryRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[CategoryRow] = GR{
+  implicit def GetResultCategoryRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[CategoryRow] = GR{
     prs => import prs._
-    CategoryRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[java.sql.Timestamp], <<?[Int]))
+    CategoryRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[DateTime], <<?[Int]))
   }
-  /** Table description of table category. Objects of this class serve as prototypes for rows in queries. */
+  /** Table description of table tag. Objects of this class serve as prototypes for rows in queries. */
   class Category(_tableTag: Tag) extends Table[CategoryRow](_tableTag, "tag") {
     def * = (id, version, createdBy, updatedBy, createdOn, updatedOn, description, displayPosition, displayToPublic, availableType, startDateTime, endDateTime, menuId, name, collectionStartDate, collectionEndDate, dayInWeek, muteUntil, productType) <> (CategoryRow.tupled, CategoryRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
@@ -241,9 +243,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column description SqlType(TEXT), Default(None) */
     val description: Rep[Option[String]] = column[Option[String]]("description", O.Default(None))
     /** Database column display_position SqlType(INT), Default(None) */
@@ -253,21 +255,21 @@ trait Tables {
     /** Database column available_type SqlType(INT), Default(None) */
     val availableType: Rep[Option[Int]] = column[Option[Int]]("available_type", O.Default(None))
     /** Database column start_date_time SqlType(DATETIME), Default(None) */
-    val startDateTime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("start_date_time", O.Default(None))
+    val startDateTime: Rep[Option[DateTime]] = column[Option[DateTime]]("start_date_time", O.Default(None))
     /** Database column end_date_time SqlType(DATETIME), Default(None) */
-    val endDateTime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("end_date_time", O.Default(None))
+    val endDateTime: Rep[Option[DateTime]] = column[Option[DateTime]]("end_date_time", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column name SqlType(TEXT), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Default(None))
     /** Database column collection_start_date SqlType(DATETIME), Default(None) */
-    val collectionStartDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("collection_start_date", O.Default(None))
+    val collectionStartDate: Rep[Option[DateTime]] = column[Option[DateTime]]("collection_start_date", O.Default(None))
     /** Database column collection_end_date SqlType(DATETIME), Default(None) */
-    val collectionEndDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("collection_end_date", O.Default(None))
+    val collectionEndDate: Rep[Option[DateTime]] = column[Option[DateTime]]("collection_end_date", O.Default(None))
     /** Database column day_in_week SqlType(VARCHAR), Length(255,true), Default(None) */
     val dayInWeek: Rep[Option[String]] = column[Option[String]]("day_in_week", O.Length(255,varying=true), O.Default(None))
     /** Database column mute_until SqlType(DATETIME), Default(None) */
-    val muteUntil: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("mute_until", O.Default(None))
+    val muteUntil: Rep[Option[DateTime]] = column[Option[DateTime]]("mute_until", O.Default(None))
     /** Database column product_type SqlType(INT), Default(None) */
     val productType: Rep[Option[Int]] = column[Option[Int]]("product_type", O.Default(None))
 
@@ -287,13 +289,13 @@ trait Tables {
    *  @param displayPosition Database column display_position SqlType(INT), Default(None)
    *  @param tagId Database column tag_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param itemId Database column item_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class CategoryItemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, displayPosition: Option[Int] = None, tagId: Option[String] = None, itemId: Option[String] = None)
+  case class CategoryItemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, displayPosition: Option[Int] = None, tagId: Option[String] = None, itemId: Option[String] = None)
   /** GetResult implicit for fetching CategoryItemRow objects using plain SQL queries */
-  implicit def GetResultCategoryItemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[CategoryItemRow] = GR{
+  implicit def GetResultCategoryItemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[CategoryItemRow] = GR{
     prs => import prs._
-    CategoryItemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Int], <<?[String], <<?[String]))
+    CategoryItemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Int], <<?[String], <<?[String]))
   }
-  /** Table description of table category_item. Objects of this class serve as prototypes for rows in queries. */
+  /** Table description of table tag_item. Objects of this class serve as prototypes for rows in queries. */
   class CategoryItem(_tableTag: Tag) extends Table[CategoryItemRow](_tableTag, "tag_item") {
     def * = (id, version, createdBy, updatedBy, createdOn, updatedOn, displayPosition, tagId, itemId) <> (CategoryItemRow.tupled, CategoryItemRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
@@ -308,9 +310,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column display_position SqlType(INT), Default(None) */
     val displayPosition: Rep[Option[Int]] = column[Option[Int]]("display_position", O.Default(None))
     /** Database column tag_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -318,10 +320,10 @@ trait Tables {
     /** Database column item_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val itemId: Rep[Option[String]] = column[Option[String]]("item_id", O.Length(32,varying=true), O.Default(None))
 
-    /** Foreign key referencing Category (database name fk_tag_item_1) */
-    lazy val categoryFk = foreignKey("fk_tag_item_1", tagId, Category)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
     /** Foreign key referencing Item (database name fk_tag_item_2) */
     lazy val itemFk = foreignKey("fk_tag_item_2", itemId, Item)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing Category (database name fk_tag_item_1) */
+    lazy val categoryFk = foreignKey("fk_tag_item_1", tagId, Category)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
   }
   /** Collection-like TableQuery object for table CategoryItem */
   lazy val CategoryItem = new TableQuery(tag => new CategoryItem(tag))
@@ -335,11 +337,11 @@ trait Tables {
    *  @param version Database column version SqlType(INT), Default(None)
    *  @param deltas Database column deltas SqlType(LONGBLOB), Default(None)
    *  @param referenceId Database column reference_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class ChangesRow(id: String, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, version: Option[Int] = None, deltas: Option[java.sql.Blob] = None, referenceId: Option[String] = None)
+  case class ChangesRow(id: String, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, version: Option[Int] = None, deltas: Option[java.sql.Blob] = None, referenceId: Option[String] = None)
   /** GetResult implicit for fetching ChangesRow objects using plain SQL queries */
-  implicit def GetResultChangesRow(implicit e0: GR[String], e1: GR[Option[java.sql.Timestamp]], e2: GR[Option[String]], e3: GR[Option[Int]], e4: GR[Option[java.sql.Blob]]): GR[ChangesRow] = GR{
+  implicit def GetResultChangesRow(implicit e0: GR[String], e1: GR[Option[DateTime]], e2: GR[Option[String]], e3: GR[Option[Int]], e4: GR[Option[java.sql.Blob]]): GR[ChangesRow] = GR{
     prs => import prs._
-    ChangesRow.tupled((<<[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int], <<?[java.sql.Blob], <<?[String]))
+    ChangesRow.tupled((<<[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int], <<?[java.sql.Blob], <<?[String]))
   }
   /** Table description of table changes. Objects of this class serve as prototypes for rows in queries. */
   class Changes(_tableTag: Tag) extends Table[ChangesRow](_tableTag, "changes") {
@@ -350,9 +352,9 @@ trait Tables {
     /** Database column id SqlType(VARCHAR), PrimaryKey, Length(32,true) */
     val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(32,varying=true))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -368,15 +370,15 @@ trait Tables {
   lazy val Changes = new TableQuery(tag => new Changes(tag))
 
   /** Row type of table Customer */
-  type CustomerRow = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Timestamp],HCons[Option[Int],HCons[Option[String],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+  type CustomerRow = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[DateTime],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[DateTime],HCons[Option[Int],HCons[Option[String],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
   /** Constructor for CustomerRow providing default values if available in the database schema. */
-  def CustomerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, password: Option[String] = None, lastName: Option[String] = None, firstName: Option[String] = None, phone: Option[String] = None, email: Option[String] = None, address: Option[String] = None, addressTwo: Option[String] = None, city: Option[String] = None, state: Option[String] = None, postal: Option[String] = None, country: Option[String] = None, latitude: Option[Float] = None, longitude: Option[Float] = None, resetPasswordKey: Option[String] = None, accountActivated: Option[Int] = None, receiveEmail: Option[Int] = None, resetPasswordExpiryDate: Option[java.sql.Timestamp] = None, accountId: Option[String] = None, organisationName: Option[String] = None, billingAddress: Option[String] = None, billingAddressTwo: Option[String] = None, billingCity: Option[String] = None, billingCountry: Option[String] = None, billingState: Option[String] = None, billingPostal: Option[String] = None, receiveNotification: Option[Int] = Some(1), preferredDeliveryAddressId: Option[String] = None, preferredBillingAddressId: Option[String] = None, pin: Option[String] = None, pinExpiryDate: Option[java.sql.Timestamp] = None, isBanned: Option[Int] = Some(0), facebookId: Option[String] = None): CustomerRow = {
+  def CustomerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, password: Option[String] = None, lastName: Option[String] = None, firstName: Option[String] = None, phone: Option[String] = None, email: Option[String] = None, address: Option[String] = None, addressTwo: Option[String] = None, city: Option[String] = None, state: Option[String] = None, postal: Option[String] = None, country: Option[String] = None, latitude: Option[Float] = None, longitude: Option[Float] = None, resetPasswordKey: Option[String] = None, accountActivated: Option[Int] = None, receiveEmail: Option[Int] = None, resetPasswordExpiryDate: Option[DateTime] = None, accountId: Option[String] = None, organisationName: Option[String] = None, billingAddress: Option[String] = None, billingAddressTwo: Option[String] = None, billingCity: Option[String] = None, billingCountry: Option[String] = None, billingState: Option[String] = None, billingPostal: Option[String] = None, receiveNotification: Option[Int] = Some(1), preferredDeliveryAddressId: Option[String] = None, preferredBillingAddressId: Option[String] = None, pin: Option[String] = None, pinExpiryDate: Option[DateTime] = None, isBanned: Option[Int] = Some(0), facebookId: Option[String] = None): CustomerRow = {
     id :: version :: createdBy :: updatedBy :: createdOn :: updatedOn :: password :: lastName :: firstName :: phone :: email :: address :: addressTwo :: city :: state :: postal :: country :: latitude :: longitude :: resetPasswordKey :: accountActivated :: receiveEmail :: resetPasswordExpiryDate :: accountId :: organisationName :: billingAddress :: billingAddressTwo :: billingCity :: billingCountry :: billingState :: billingPostal :: receiveNotification :: preferredDeliveryAddressId :: preferredBillingAddressId :: pin :: pinExpiryDate :: isBanned :: facebookId :: HNil
   }
   /** GetResult implicit for fetching CustomerRow objects using plain SQL queries */
-  implicit def GetResultCustomerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[CustomerRow] = GR{
+  implicit def GetResultCustomerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[CustomerRow] = GR{
     prs => import prs._
-    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[Int] :: <<?[String] :: HNil
+    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[DateTime] :: <<?[DateTime] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[DateTime] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[DateTime] :: <<?[Int] :: <<?[String] :: HNil
   }
   /** Table description of table customer. Objects of this class serve as prototypes for rows in queries. */
   class Customer(_tableTag: Tag) extends Table[CustomerRow](_tableTag, "customer") {
@@ -391,9 +393,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column password SqlType(VARCHAR), Length(255,true), Default(None) */
     val password: Rep[Option[String]] = column[Option[String]]("password", O.Length(255,varying=true), O.Default(None))
     /** Database column last_name SqlType(VARCHAR), Length(255,true), Default(None) */
@@ -427,7 +429,7 @@ trait Tables {
     /** Database column receive_email SqlType(INT), Default(None) */
     val receiveEmail: Rep[Option[Int]] = column[Option[Int]]("receive_email", O.Default(None))
     /** Database column reset_password_expiry_date SqlType(DATETIME), Default(None) */
-    val resetPasswordExpiryDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("reset_password_expiry_date", O.Default(None))
+    val resetPasswordExpiryDate: Rep[Option[DateTime]] = column[Option[DateTime]]("reset_password_expiry_date", O.Default(None))
     /** Database column account_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val accountId: Rep[Option[String]] = column[Option[String]]("account_id", O.Length(32,varying=true), O.Default(None))
     /** Database column organisation_name SqlType(TEXT), Default(None) */
@@ -453,7 +455,7 @@ trait Tables {
     /** Database column pin SqlType(VARCHAR), Length(6,true), Default(None) */
     val pin: Rep[Option[String]] = column[Option[String]]("pin", O.Length(6,varying=true), O.Default(None))
     /** Database column pin_expiry_date SqlType(DATETIME), Default(None) */
-    val pinExpiryDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("pin_expiry_date", O.Default(None))
+    val pinExpiryDate: Rep[Option[DateTime]] = column[Option[DateTime]]("pin_expiry_date", O.Default(None))
     /** Database column is_banned SqlType(INT), Default(Some(0)) */
     val isBanned: Rep[Option[Int]] = column[Option[Int]]("is_banned", O.Default(Some(0)))
     /** Database column facebook_id SqlType(VARCHAR), Length(45,true), Default(None) */
@@ -479,11 +481,11 @@ trait Tables {
    *  @param paymentOptionId Database column payment_option_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param paymentRateType Database column payment_rate_type SqlType(INT), Default(None)
    *  @param currentPaymentRateHistoryId Database column current_payment_rate_history_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class CustomPaymentRateRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, percentCut: Option[Float] = None, dollarCut: Option[Float] = None, paymentOptionId: Option[String] = None, paymentRateType: Option[Int] = None, currentPaymentRateHistoryId: Option[String] = None)
+  case class CustomPaymentRateRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, percentCut: Option[Float] = None, dollarCut: Option[Float] = None, paymentOptionId: Option[String] = None, paymentRateType: Option[Int] = None, currentPaymentRateHistoryId: Option[String] = None)
   /** GetResult implicit for fetching CustomPaymentRateRow objects using plain SQL queries */
-  implicit def GetResultCustomPaymentRateRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[CustomPaymentRateRow] = GR{
+  implicit def GetResultCustomPaymentRateRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[CustomPaymentRateRow] = GR{
     prs => import prs._
-    CustomPaymentRateRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Float], <<?[Float], <<?[String], <<?[Int], <<?[String]))
+    CustomPaymentRateRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Float], <<?[Float], <<?[String], <<?[Int], <<?[String]))
   }
   /** Table description of table custom_payment_rate. Objects of this class serve as prototypes for rows in queries. */
   class CustomPaymentRate(_tableTag: Tag) extends Table[CustomPaymentRateRow](_tableTag, "custom_payment_rate") {
@@ -500,9 +502,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column percent_cut SqlType(FLOAT), Default(None) */
     val percentCut: Rep[Option[Float]] = column[Option[Float]]("percent_cut", O.Default(None))
     /** Database column dollar_cut SqlType(FLOAT), Default(None) */
@@ -529,11 +531,11 @@ trait Tables {
    *  @param updatedOn Database column updated_on SqlType(DATETIME), Default(None)
    *  @param log Database column log SqlType(TEXT), Default(None)
    *  @param deliveryRequestId Database column delivery_request_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class DeliveryLogRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, log: Option[String] = None, deliveryRequestId: Option[String] = None)
+  case class DeliveryLogRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, log: Option[String] = None, deliveryRequestId: Option[String] = None)
   /** GetResult implicit for fetching DeliveryLogRow objects using plain SQL queries */
-  implicit def GetResultDeliveryLogRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[DeliveryLogRow] = GR{
+  implicit def GetResultDeliveryLogRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[DeliveryLogRow] = GR{
     prs => import prs._
-    DeliveryLogRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String]))
+    DeliveryLogRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String]))
   }
   /** Table description of table delivery_log. Objects of this class serve as prototypes for rows in queries. */
   class DeliveryLog(_tableTag: Tag) extends Table[DeliveryLogRow](_tableTag, "delivery_log") {
@@ -550,9 +552,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column log SqlType(TEXT), Default(None) */
     val log: Rep[Option[String]] = column[Option[String]]("log", O.Default(None))
     /** Database column delivery_request_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -579,11 +581,11 @@ trait Tables {
    *  @param autoDeliveryLimit Database column auto_delivery_limit SqlType(FLOAT), Default(None)
    *  @param enableAutoDelivery Database column enable_auto_delivery SqlType(INT), Default(None)
    *  @param comment Database column comment SqlType(TEXT), Default(None) */
-  case class DeliveryPartnerAllocationRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, partnerId: Option[String] = None, allocatedId: Option[String] = None, strategyType: Option[Short] = Some(0), deliveryPartnerAccessKey: Option[String] = None, deliveryPartnerSecretKey: Option[String] = None, deliveryContactName: Option[String] = None, deliveryContactEmail: Option[String] = None, deliveryContactPhone: Option[String] = None, autoDeliveryLimit: Option[Float] = None, enableAutoDelivery: Option[Int] = None, comment: Option[String] = None)
+  case class DeliveryPartnerAllocationRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, partnerId: Option[String] = None, allocatedId: Option[String] = None, strategyType: Option[Short] = Some(0), deliveryPartnerAccessKey: Option[String] = None, deliveryPartnerSecretKey: Option[String] = None, deliveryContactName: Option[String] = None, deliveryContactEmail: Option[String] = None, deliveryContactPhone: Option[String] = None, autoDeliveryLimit: Option[Float] = None, enableAutoDelivery: Option[Int] = None, comment: Option[String] = None)
   /** GetResult implicit for fetching DeliveryPartnerAllocationRow objects using plain SQL queries */
-  implicit def GetResultDeliveryPartnerAllocationRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Short]], e5: GR[Option[Float]]): GR[DeliveryPartnerAllocationRow] = GR{
+  implicit def GetResultDeliveryPartnerAllocationRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Short]], e5: GR[Option[Float]]): GR[DeliveryPartnerAllocationRow] = GR{
     prs => import prs._
-    DeliveryPartnerAllocationRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Short], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Int], <<?[String]))
+    DeliveryPartnerAllocationRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Short], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Int], <<?[String]))
   }
   /** Table description of table delivery_partner_allocation. Objects of this class serve as prototypes for rows in queries. */
   class DeliveryPartnerAllocation(_tableTag: Tag) extends Table[DeliveryPartnerAllocationRow](_tableTag, "delivery_partner_allocation") {
@@ -600,9 +602,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column partner_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val partnerId: Rep[Option[String]] = column[Option[String]]("partner_id", O.Length(32,varying=true), O.Default(None))
     /** Database column allocated_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -652,11 +654,11 @@ trait Tables {
    *  @param country Database column country SqlType(INT), Default(None)
    *  @param requestNumber Database column request_number SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param requestErrorMessage Database column request_error_message SqlType(VARCHAR), Length(255,true), Default(None) */
-  case class DeliveryRequestRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, comment: Option[String] = None, cashCollection: Option[Int] = None, transport: Option[Int] = None, storeOrderId: Option[String] = None, selectedPartnerId: Option[String] = None, status: Option[Int] = None, pickupDate: Option[java.sql.Timestamp] = None, country: Option[Int] = None, requestNumber: Option[String] = None, requestErrorMessage: Option[String] = None)
+  case class DeliveryRequestRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, comment: Option[String] = None, cashCollection: Option[Int] = None, transport: Option[Int] = None, storeOrderId: Option[String] = None, selectedPartnerId: Option[String] = None, status: Option[Int] = None, pickupDate: Option[DateTime] = None, country: Option[Int] = None, requestNumber: Option[String] = None, requestErrorMessage: Option[String] = None)
   /** GetResult implicit for fetching DeliveryRequestRow objects using plain SQL queries */
-  implicit def GetResultDeliveryRequestRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[DeliveryRequestRow] = GR{
+  implicit def GetResultDeliveryRequestRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[DeliveryRequestRow] = GR{
     prs => import prs._
-    DeliveryRequestRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[Int], <<?[java.sql.Timestamp], <<?[Int], <<?[String], <<?[String]))
+    DeliveryRequestRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[Int], <<?[DateTime], <<?[Int], <<?[String], <<?[String]))
   }
   /** Table description of table delivery_request. Objects of this class serve as prototypes for rows in queries. */
   class DeliveryRequest(_tableTag: Tag) extends Table[DeliveryRequestRow](_tableTag, "delivery_request") {
@@ -673,9 +675,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column comment SqlType(TEXT), Default(None) */
     val comment: Rep[Option[String]] = column[Option[String]]("comment", O.Default(None))
     /** Database column cash_collection SqlType(INT), Default(None) */
@@ -689,7 +691,7 @@ trait Tables {
     /** Database column status SqlType(INT), Default(None) */
     val status: Rep[Option[Int]] = column[Option[Int]]("status", O.Default(None))
     /** Database column pickup_date SqlType(DATETIME), Default(None) */
-    val pickupDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("pickup_date", O.Default(None))
+    val pickupDate: Rep[Option[DateTime]] = column[Option[DateTime]]("pickup_date", O.Default(None))
     /** Database column country SqlType(INT), Default(None) */
     val country: Rep[Option[Int]] = column[Option[Int]]("country", O.Default(None))
     /** Database column request_number SqlType(VARCHAR), Length(255,true), Default(None) */
@@ -712,11 +714,11 @@ trait Tables {
    *  @param country Database column country SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param `type` Database column type SqlType(INT), Default(None)
    *  @param partnerId Database column partner_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class DeliveryZoneRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, name: Option[String] = None, zoneCoordinate: Option[String] = None, country: Option[String] = None, `type`: Option[Int] = None, partnerId: Option[String] = None)
+  case class DeliveryZoneRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, name: Option[String] = None, zoneCoordinate: Option[String] = None, country: Option[String] = None, `type`: Option[Int] = None, partnerId: Option[String] = None)
   /** GetResult implicit for fetching DeliveryZoneRow objects using plain SQL queries */
-  implicit def GetResultDeliveryZoneRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[DeliveryZoneRow] = GR{
+  implicit def GetResultDeliveryZoneRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[DeliveryZoneRow] = GR{
     prs => import prs._
-    DeliveryZoneRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[String]))
+    DeliveryZoneRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[String]))
   }
   /** Table description of table delivery_zone. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
@@ -734,9 +736,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column name SqlType(VARCHAR), Length(255,true), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
     /** Database column zone_coordinate SqlType(TEXT), Default(None) */
@@ -765,11 +767,11 @@ trait Tables {
    *  @param deviceToken Database column device_token SqlType(TEXT), Default(None)
    *  @param sentTime Database column sent_time SqlType(BIGINT), Default(None)
    *  @param notificationEvent Database column notification_event SqlType(INT), Default(None) */
-  case class DevicePushNotificationStatusRow(id: String = "", version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, deviceToken: Option[String] = None, sentTime: Option[Long] = None, notificationEvent: Option[Int] = None)
+  case class DevicePushNotificationStatusRow(id: String = "", version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, deviceToken: Option[String] = None, sentTime: Option[Long] = None, notificationEvent: Option[Int] = None)
   /** GetResult implicit for fetching DevicePushNotificationStatusRow objects using plain SQL queries */
-  implicit def GetResultDevicePushNotificationStatusRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Long]]): GR[DevicePushNotificationStatusRow] = GR{
+  implicit def GetResultDevicePushNotificationStatusRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Long]]): GR[DevicePushNotificationStatusRow] = GR{
     prs => import prs._
-    DevicePushNotificationStatusRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Long], <<?[Int]))
+    DevicePushNotificationStatusRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Long], <<?[Int]))
   }
   /** Table description of table device_push_notification_status. Objects of this class serve as prototypes for rows in queries. */
   class DevicePushNotificationStatus(_tableTag: Tag) extends Table[DevicePushNotificationStatusRow](_tableTag, "device_push_notification_status") {
@@ -786,9 +788,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column device_token SqlType(TEXT), Default(None) */
     val deviceToken: Rep[Option[String]] = column[Option[String]]("device_token", O.Default(None))
     /** Database column sent_time SqlType(BIGINT), Default(None) */
@@ -811,11 +813,11 @@ trait Tables {
    *  @param mailId Database column mail_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param errorCause Database column error_cause SqlType(TEXT), Default(None)
    *  @param storeOrder Database column store_order SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class EmailBlacklistRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, notificationType: Option[String] = None, messageId: Option[String] = None, mailId: Option[String] = None, errorCause: Option[String] = None, storeOrder: Option[String] = None)
+  case class EmailBlacklistRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, notificationType: Option[String] = None, messageId: Option[String] = None, mailId: Option[String] = None, errorCause: Option[String] = None, storeOrder: Option[String] = None)
   /** GetResult implicit for fetching EmailBlacklistRow objects using plain SQL queries */
-  implicit def GetResultEmailBlacklistRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[EmailBlacklistRow] = GR{
+  implicit def GetResultEmailBlacklistRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[EmailBlacklistRow] = GR{
     prs => import prs._
-    EmailBlacklistRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
+    EmailBlacklistRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table email_blacklist. Objects of this class serve as prototypes for rows in queries. */
   class EmailBlacklist(_tableTag: Tag) extends Table[EmailBlacklistRow](_tableTag, "email_blacklist") {
@@ -832,9 +834,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column notification_type SqlType(VARCHAR), Length(32,true), Default(None) */
     val notificationType: Rep[Option[String]] = column[Option[String]]("notification_type", O.Length(32,varying=true), O.Default(None))
     /** Database column message_id SqlType(TEXT), Default(None) */
@@ -861,11 +863,11 @@ trait Tables {
    *  @param email Database column email SqlType(VARCHAR), Length(200,true), Default(None)
    *  @param status Database column status SqlType(VARCHAR), Length(45,true), Default(None)
    *  @param notificationType Database column notification_type SqlType(VARCHAR), Length(100,true), Default(None) */
-  case class EmailLogRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, storeOrderId: Option[String] = None, email: Option[String] = None, status: Option[String] = None, notificationType: Option[String] = None)
+  case class EmailLogRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, menuId: Option[String] = None, storeOrderId: Option[String] = None, email: Option[String] = None, status: Option[String] = None, notificationType: Option[String] = None)
   /** GetResult implicit for fetching EmailLogRow objects using plain SQL queries */
-  implicit def GetResultEmailLogRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[EmailLogRow] = GR{
+  implicit def GetResultEmailLogRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[EmailLogRow] = GR{
     prs => import prs._
-    EmailLogRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
+    EmailLogRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table email_log. Objects of this class serve as prototypes for rows in queries. */
   class EmailLog(_tableTag: Tag) extends Table[EmailLogRow](_tableTag, "email_log") {
@@ -882,9 +884,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -911,11 +913,11 @@ trait Tables {
    *  @param status Database column status SqlType(TEXT), Default(None)
    *  @param messageId Database column message_id SqlType(TEXT), Default(None)
    *  @param storeOrderId Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class FaxBlacklistRow(id: String = "", version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, phone: Option[String] = None, errorCode: Option[String] = None, status: Option[String] = None, messageId: Option[String] = None, storeOrderId: Option[String] = None)
+  case class FaxBlacklistRow(id: String = "", version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, phone: Option[String] = None, errorCode: Option[String] = None, status: Option[String] = None, messageId: Option[String] = None, storeOrderId: Option[String] = None)
   /** GetResult implicit for fetching FaxBlacklistRow objects using plain SQL queries */
-  implicit def GetResultFaxBlacklistRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[FaxBlacklistRow] = GR{
+  implicit def GetResultFaxBlacklistRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[FaxBlacklistRow] = GR{
     prs => import prs._
-    FaxBlacklistRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
+    FaxBlacklistRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table fax_blacklist. Objects of this class serve as prototypes for rows in queries. */
   class FaxBlacklist(_tableTag: Tag) extends Table[FaxBlacklistRow](_tableTag, "fax_blacklist") {
@@ -932,9 +934,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column phone SqlType(VARCHAR), Length(32,true), Default(None) */
     val phone: Rep[Option[String]] = column[Option[String]]("phone", O.Length(32,varying=true), O.Default(None))
     /** Database column error_code SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -969,11 +971,11 @@ trait Tables {
    *  @param faxPages Database column fax_pages SqlType(INT), Default(None)
    *  @param failCount Database column fail_count SqlType(INT), Default(None)
    *  @param storeOrderId Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class FaxLogRow(id: String, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, version: Option[Int] = None, menuId: Option[String] = None, accountId: Option[String] = None, phone: Option[String] = None, status: Option[String] = None, isBillable: Option[Int] = None, messageSid: Option[String] = None, faxErrorCode: Option[String] = None, currency: Option[String] = None, rate: Option[Float] = None, debit: Option[Float] = None, faxPages: Option[Int] = None, failCount: Option[Int] = None, storeOrderId: Option[String] = None)
+  case class FaxLogRow(id: String, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, version: Option[Int] = None, menuId: Option[String] = None, accountId: Option[String] = None, phone: Option[String] = None, status: Option[String] = None, isBillable: Option[Int] = None, messageSid: Option[String] = None, faxErrorCode: Option[String] = None, currency: Option[String] = None, rate: Option[Float] = None, debit: Option[Float] = None, faxPages: Option[Int] = None, failCount: Option[Int] = None, storeOrderId: Option[String] = None)
   /** GetResult implicit for fetching FaxLogRow objects using plain SQL queries */
-  implicit def GetResultFaxLogRow(implicit e0: GR[String], e1: GR[Option[java.sql.Timestamp]], e2: GR[Option[String]], e3: GR[Option[Int]], e4: GR[Option[Float]]): GR[FaxLogRow] = GR{
+  implicit def GetResultFaxLogRow(implicit e0: GR[String], e1: GR[Option[DateTime]], e2: GR[Option[String]], e3: GR[Option[Int]], e4: GR[Option[Float]]): GR[FaxLogRow] = GR{
     prs => import prs._
-    FaxLogRow.tupled((<<[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[Int], <<?[Int], <<?[String]))
+    FaxLogRow.tupled((<<[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[Int], <<?[Int], <<?[String]))
   }
   /** Table description of table fax_log. Objects of this class serve as prototypes for rows in queries. */
   class FaxLog(_tableTag: Tag) extends Table[FaxLogRow](_tableTag, "fax_log") {
@@ -984,9 +986,9 @@ trait Tables {
     /** Database column id SqlType(VARCHAR), PrimaryKey, Length(32,true) */
     val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(32,varying=true))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -1097,11 +1099,11 @@ trait Tables {
    *  @param paymentRateType Database column payment_rate_type SqlType(INT), Default(None)
    *  @param paymentId Database column payment_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param currentPaymentRateHistoryId Database column current_payment_rate_history_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class GlobalPaymentRateRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, country: Option[String] = None, percentCut: Option[Float] = None, dollarCut: Option[Float] = None, paymentRateType: Option[Int] = None, paymentId: Option[String] = None, currentPaymentRateHistoryId: Option[String] = None)
+  case class GlobalPaymentRateRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, country: Option[String] = None, percentCut: Option[Float] = None, dollarCut: Option[Float] = None, paymentRateType: Option[Int] = None, paymentId: Option[String] = None, currentPaymentRateHistoryId: Option[String] = None)
   /** GetResult implicit for fetching GlobalPaymentRateRow objects using plain SQL queries */
-  implicit def GetResultGlobalPaymentRateRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[GlobalPaymentRateRow] = GR{
+  implicit def GetResultGlobalPaymentRateRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[GlobalPaymentRateRow] = GR{
     prs => import prs._
-    GlobalPaymentRateRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Float], <<?[Float], <<?[Int], <<?[String], <<?[String]))
+    GlobalPaymentRateRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Float], <<?[Float], <<?[Int], <<?[String], <<?[String]))
   }
   /** Table description of table global_payment_rate. Objects of this class serve as prototypes for rows in queries. */
   class GlobalPaymentRate(_tableTag: Tag) extends Table[GlobalPaymentRateRow](_tableTag, "global_payment_rate") {
@@ -1118,9 +1120,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column country SqlType(VARCHAR), Length(200,true), Default(None) */
     val country: Rep[Option[String]] = column[Option[String]]("country", O.Length(200,varying=true), O.Default(None))
     /** Database column percent_cut SqlType(FLOAT), Default(None) */
@@ -1152,11 +1154,11 @@ trait Tables {
    *  @param unitType Database column unit_type SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param menuId Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param department Database column department SqlType(VARCHAR), Length(255,true), Default(None) */
-  case class IngredientRow(id: String, version: Option[Int] = None, updatedBy: Option[String] = None, createdBy: Option[String] = None, updatedOn: Option[java.sql.Timestamp] = None, createdOn: Option[java.sql.Timestamp] = None, bomNumber: Option[String] = None, name: Option[String] = None, unitType: Option[String] = None, menuId: Option[String] = None, department: Option[String] = None)
+  case class IngredientRow(id: String, version: Option[Int] = None, updatedBy: Option[String] = None, createdBy: Option[String] = None, updatedOn: Option[DateTime] = None, createdOn: Option[DateTime] = None, bomNumber: Option[String] = None, name: Option[String] = None, unitType: Option[String] = None, menuId: Option[String] = None, department: Option[String] = None)
   /** GetResult implicit for fetching IngredientRow objects using plain SQL queries */
-  implicit def GetResultIngredientRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[IngredientRow] = GR{
+  implicit def GetResultIngredientRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[IngredientRow] = GR{
     prs => import prs._
-    IngredientRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
+    IngredientRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table ingredient. Objects of this class serve as prototypes for rows in queries. */
   class Ingredient(_tableTag: Tag) extends Table[IngredientRow](_tableTag, "ingredient") {
@@ -1173,9 +1175,9 @@ trait Tables {
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column bom_number SqlType(VARCHAR), Length(255,true), Default(None) */
     val bomNumber: Rep[Option[String]] = column[Option[String]]("bom_number", O.Length(255,varying=true), O.Default(None))
     /** Database column name SqlType(TEXT), Default(None) */
@@ -1214,11 +1216,11 @@ trait Tables {
    *  @param muteUntil Database column mute_until SqlType(DATETIME), Default(None)
    *  @param displayToPublic Database column display_to_public SqlType(INT), Default(Some(1))
    *  @param productType Database column product_type SqlType(INT), Default(None) */
-  case class ItemRow(id: String, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, description: Option[String] = None, name: Option[String] = Some("NULL"), version: Option[Int] = None, availableType: Option[Int] = None, orderId: Option[String] = None, startDateTime: Option[java.sql.Timestamp] = None, endDateTime: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, isCompositeItem: Option[Int] = Some(0), collectionStartDate: Option[java.sql.Timestamp] = None, collectionEndDate: Option[java.sql.Timestamp] = None, dayInWeek: Option[String] = None, muteUntil: Option[java.sql.Timestamp] = None, displayToPublic: Option[Int] = Some(1), productType: Option[Int] = None)
+  case class ItemRow(id: String, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, description: Option[String] = None, name: Option[String] = Some("NULL"), version: Option[Int] = None, availableType: Option[Int] = None, orderId: Option[String] = None, startDateTime: Option[DateTime] = None, endDateTime: Option[DateTime] = None, menuId: Option[String] = None, isCompositeItem: Option[Int] = Some(0), collectionStartDate: Option[DateTime] = None, collectionEndDate: Option[DateTime] = None, dayInWeek: Option[String] = None, muteUntil: Option[DateTime] = None, displayToPublic: Option[Int] = Some(1), productType: Option[Int] = None)
   /** GetResult implicit for fetching ItemRow objects using plain SQL queries */
-  implicit def GetResultItemRow(implicit e0: GR[String], e1: GR[Option[java.sql.Timestamp]], e2: GR[Option[String]], e3: GR[Option[Int]]): GR[ItemRow] = GR{
+  implicit def GetResultItemRow(implicit e0: GR[String], e1: GR[Option[DateTime]], e2: GR[Option[String]], e3: GR[Option[Int]]): GR[ItemRow] = GR{
     prs => import prs._
-    ItemRow.tupled((<<[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[java.sql.Timestamp], <<?[Int], <<?[Int]))
+    ItemRow.tupled((<<[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[DateTime], <<?[DateTime], <<?[String], <<?[DateTime], <<?[Int], <<?[Int]))
   }
   /** Table description of table item. Objects of this class serve as prototypes for rows in queries. */
   class Item(_tableTag: Tag) extends Table[ItemRow](_tableTag, "item") {
@@ -1229,9 +1231,9 @@ trait Tables {
     /** Database column id SqlType(VARCHAR), PrimaryKey, Length(32,true) */
     val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(32,varying=true))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -1247,21 +1249,21 @@ trait Tables {
     /** Database column order_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val orderId: Rep[Option[String]] = column[Option[String]]("order_id", O.Length(32,varying=true), O.Default(None))
     /** Database column start_date_time SqlType(DATETIME), Default(None) */
-    val startDateTime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("start_date_time", O.Default(None))
+    val startDateTime: Rep[Option[DateTime]] = column[Option[DateTime]]("start_date_time", O.Default(None))
     /** Database column end_date_time SqlType(DATETIME), Default(None) */
-    val endDateTime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("end_date_time", O.Default(None))
+    val endDateTime: Rep[Option[DateTime]] = column[Option[DateTime]]("end_date_time", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column is_composite_item SqlType(INT), Default(Some(0)) */
     val isCompositeItem: Rep[Option[Int]] = column[Option[Int]]("is_composite_item", O.Default(Some(0)))
     /** Database column collection_start_date SqlType(DATETIME), Default(None) */
-    val collectionStartDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("collection_start_date", O.Default(None))
+    val collectionStartDate: Rep[Option[DateTime]] = column[Option[DateTime]]("collection_start_date", O.Default(None))
     /** Database column collection_end_date SqlType(DATETIME), Default(None) */
-    val collectionEndDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("collection_end_date", O.Default(None))
+    val collectionEndDate: Rep[Option[DateTime]] = column[Option[DateTime]]("collection_end_date", O.Default(None))
     /** Database column day_in_week SqlType(VARCHAR), Length(255,true), Default(None) */
     val dayInWeek: Rep[Option[String]] = column[Option[String]]("day_in_week", O.Length(255,varying=true), O.Default(None))
     /** Database column mute_until SqlType(DATETIME), Default(None) */
-    val muteUntil: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("mute_until", O.Default(None))
+    val muteUntil: Rep[Option[DateTime]] = column[Option[DateTime]]("mute_until", O.Default(None))
     /** Database column display_to_public SqlType(INT), Default(Some(1)) */
     val displayToPublic: Rep[Option[Int]] = column[Option[Int]]("display_to_public", O.Default(Some(1)))
     /** Database column product_type SqlType(INT), Default(None) */
@@ -1285,11 +1287,11 @@ trait Tables {
    *  @param displayPosition Database column display_position SqlType(INT), Default(None)
    *  @param filename Database column filename SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param itemId Database column item_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class ItemImageRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, displayPosition: Option[Int] = None, filename: Option[String] = None, itemId: Option[String] = None)
+  case class ItemImageRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, displayPosition: Option[Int] = None, filename: Option[String] = None, itemId: Option[String] = None)
   /** GetResult implicit for fetching ItemImageRow objects using plain SQL queries */
-  implicit def GetResultItemImageRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[ItemImageRow] = GR{
+  implicit def GetResultItemImageRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[ItemImageRow] = GR{
     prs => import prs._
-    ItemImageRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Int], <<?[String], <<?[String]))
+    ItemImageRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Int], <<?[String], <<?[String]))
   }
   /** Table description of table item_image. Objects of this class serve as prototypes for rows in queries. */
   class ItemImage(_tableTag: Tag) extends Table[ItemImageRow](_tableTag, "item_image") {
@@ -1306,9 +1308,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column display_position SqlType(INT), Default(None) */
     val displayPosition: Rep[Option[Int]] = column[Option[Int]]("display_position", O.Default(None))
     /** Database column filename SqlType(VARCHAR), Length(255,true), Default(None) */
@@ -1332,11 +1334,11 @@ trait Tables {
    *  @param itemId Database column item_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param subitemId Database column subitem_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param displayPosition Database column display_position SqlType(INT), Default(None) */
-  case class ItemSubitemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, itemId: Option[String] = None, subitemId: Option[String] = None, displayPosition: Option[Int] = None)
+  case class ItemSubitemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, itemId: Option[String] = None, subitemId: Option[String] = None, displayPosition: Option[Int] = None)
   /** GetResult implicit for fetching ItemSubitemRow objects using plain SQL queries */
-  implicit def GetResultItemSubitemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[ItemSubitemRow] = GR{
+  implicit def GetResultItemSubitemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[ItemSubitemRow] = GR{
     prs => import prs._
-    ItemSubitemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int]))
+    ItemSubitemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int]))
   }
   /** Table description of table item_subitem. Objects of this class serve as prototypes for rows in queries. */
   class ItemSubitem(_tableTag: Tag) extends Table[ItemSubitemRow](_tableTag, "item_subitem") {
@@ -1353,9 +1355,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column item_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val itemId: Rep[Option[String]] = column[Option[String]]("item_id", O.Length(32,varying=true), O.Default(None))
     /** Database column subitem_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -1384,11 +1386,11 @@ trait Tables {
    *  @param `type` Database column type SqlType(INT), Default(None)
    *  @param isPreventCustomerToCheckout Database column is_prevent_customer_to_checkout SqlType(INT), Default(Some(0))
    *  @param messageToCustomer Database column message_to_customer SqlType(TEXT), Default(None) */
-  case class LargeOrderLeadTimeRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, storeId: Option[String] = None, largeOrderAmount: Option[Float] = None, largeOrderLeadTime: Option[Int] = None, `type`: Option[Int] = None, isPreventCustomerToCheckout: Option[Int] = Some(0), messageToCustomer: Option[String] = None)
+  case class LargeOrderLeadTimeRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, storeId: Option[String] = None, largeOrderAmount: Option[Float] = None, largeOrderLeadTime: Option[Int] = None, `type`: Option[Int] = None, isPreventCustomerToCheckout: Option[Int] = Some(0), messageToCustomer: Option[String] = None)
   /** GetResult implicit for fetching LargeOrderLeadTimeRow objects using plain SQL queries */
-  implicit def GetResultLargeOrderLeadTimeRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[LargeOrderLeadTimeRow] = GR{
+  implicit def GetResultLargeOrderLeadTimeRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[LargeOrderLeadTimeRow] = GR{
     prs => import prs._
-    LargeOrderLeadTimeRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Float], <<?[Int], <<?[Int], <<?[Int], <<?[String]))
+    LargeOrderLeadTimeRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Float], <<?[Int], <<?[Int], <<?[Int], <<?[String]))
   }
   /** Table description of table large_order_lead_time. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
@@ -1406,9 +1408,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column store_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val storeId: Rep[Option[String]] = column[Option[String]]("store_id", O.Length(32,varying=true), O.Default(None))
     /** Database column large_order_amount SqlType(FLOAT), Default(None) */
@@ -1436,11 +1438,11 @@ trait Tables {
    *  @param menuId Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param lastOrderNumberString Database column last_order_number_string SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param lastOrderNumberInteger Database column last_order_number_integer SqlType(INT), Default(None) */
-  case class LastOrderNumberTrackerRow(id: String, version: Option[Int] = None, updatedOn: Option[java.sql.Timestamp] = None, createdOn: Option[java.sql.Timestamp] = None, updatedBy: Option[String] = None, createdBy: Option[String] = None, menuId: Option[String] = None, lastOrderNumberString: Option[String] = None, lastOrderNumberInteger: Option[Int] = None)
+  case class LastOrderNumberTrackerRow(id: String, version: Option[Int] = None, updatedOn: Option[DateTime] = None, createdOn: Option[DateTime] = None, updatedBy: Option[String] = None, createdBy: Option[String] = None, menuId: Option[String] = None, lastOrderNumberString: Option[String] = None, lastOrderNumberInteger: Option[Int] = None)
   /** GetResult implicit for fetching LastOrderNumberTrackerRow objects using plain SQL queries */
-  implicit def GetResultLastOrderNumberTrackerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Option[String]]): GR[LastOrderNumberTrackerRow] = GR{
+  implicit def GetResultLastOrderNumberTrackerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[DateTime]], e3: GR[Option[String]]): GR[LastOrderNumberTrackerRow] = GR{
     prs => import prs._
-    LastOrderNumberTrackerRow.tupled((<<[String], <<?[Int], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int]))
+    LastOrderNumberTrackerRow.tupled((<<[String], <<?[Int], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int]))
   }
   /** Table description of table last_order_number_tracker. Objects of this class serve as prototypes for rows in queries. */
   class LastOrderNumberTracker(_tableTag: Tag) extends Table[LastOrderNumberTrackerRow](_tableTag, "last_order_number_tracker") {
@@ -1453,9 +1455,9 @@ trait Tables {
     /** Database column version SqlType(INT), Default(None) */
     val version: Rep[Option[Int]] = column[Option[Int]]("version", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -1522,11 +1524,11 @@ trait Tables {
    *  @param userName Database column user_name SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param password Database column password SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param securedKey Database column secured_key SqlType(VARCHAR), Length(255,true), Default(None) */
-  case class LocalizationExternalAccessRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, expiryDateTime: Option[Long] = None, userName: Option[String] = None, password: Option[String] = None, securedKey: Option[String] = None)
+  case class LocalizationExternalAccessRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, expiryDateTime: Option[Long] = None, userName: Option[String] = None, password: Option[String] = None, securedKey: Option[String] = None)
   /** GetResult implicit for fetching LocalizationExternalAccessRow objects using plain SQL queries */
-  implicit def GetResultLocalizationExternalAccessRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Long]]): GR[LocalizationExternalAccessRow] = GR{
+  implicit def GetResultLocalizationExternalAccessRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Long]]): GR[LocalizationExternalAccessRow] = GR{
     prs => import prs._
-    LocalizationExternalAccessRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Long], <<?[String], <<?[String], <<?[String]))
+    LocalizationExternalAccessRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Long], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table localization_external_access. Objects of this class serve as prototypes for rows in queries. */
   class LocalizationExternalAccess(_tableTag: Tag) extends Table[LocalizationExternalAccessRow](_tableTag, "localization_external_access") {
@@ -1543,9 +1545,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column expiry_date_time SqlType(BIGINT), Default(None) */
     val expiryDateTime: Rep[Option[Long]] = column[Option[Long]]("expiry_date_time", O.Default(None))
     /** Database column user_name SqlType(VARCHAR), Length(255,true), Default(None) */
@@ -1576,11 +1578,11 @@ trait Tables {
    *  @param deliveryArea Database column delivery_area SqlType(FLOAT), Default(None)
    *  @param zoneName Database column zone_name SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param priorityPosition Database column priority_position SqlType(INT), Default(Some(0)) */
-  case class LocationRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, zoneCoordinate: Option[String] = None, cost: Option[Float] = None, durationInMinutes: Option[Int] = None, minimumOrderCost: Option[Float] = None, maximumOrderCost: Option[Float] = None, storeId: Option[String] = None, poly: Option[String] = None, deliveryFreeAfter: Option[Float] = None, deliveryArea: Option[Float] = None, zoneName: Option[String] = None, priorityPosition: Option[Int] = Some(0))
+  case class LocationRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, zoneCoordinate: Option[String] = None, cost: Option[Float] = None, durationInMinutes: Option[Int] = None, minimumOrderCost: Option[Float] = None, maximumOrderCost: Option[Float] = None, storeId: Option[String] = None, poly: Option[String] = None, deliveryFreeAfter: Option[Float] = None, deliveryArea: Option[Float] = None, zoneName: Option[String] = None, priorityPosition: Option[Int] = Some(0))
   /** GetResult implicit for fetching LocationRow objects using plain SQL queries */
-  implicit def GetResultLocationRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[LocationRow] = GR{
+  implicit def GetResultLocationRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[LocationRow] = GR{
     prs => import prs._
-    LocationRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Float], <<?[Int], <<?[Float], <<?[Float], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[String], <<?[Int]))
+    LocationRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Float], <<?[Int], <<?[Float], <<?[Float], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[String], <<?[Int]))
   }
   /** Table description of table location. Objects of this class serve as prototypes for rows in queries. */
   class Location(_tableTag: Tag) extends Table[LocationRow](_tableTag, "location") {
@@ -1597,9 +1599,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column zone_coordinate SqlType(TEXT), Default(None) */
     val zoneCoordinate: Rep[Option[String]] = column[Option[String]]("zone_coordinate", O.Default(None))
     /** Database column cost SqlType(FLOAT), Default(None) */
@@ -1629,18 +1631,16 @@ trait Tables {
   /** Collection-like TableQuery object for table Location */
   lazy val Location = new TableQuery(tag => new Location(tag))
 
-
-
   /** Row type of table Menu */
-  type MenuRow = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+  type MenuRow = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
   /** Constructor for MenuRow providing default values if available in the database schema. */
-  def MenuRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, cname: Option[String] = None, subdomain: Option[String] = None, currencyCode: Option[String] = None, accountId: Option[String] = None, termsAndConditions: Option[String] = None, name: Option[String] = None, email: Option[String] = None, pendingTemplate: Option[String] = None, confirmedTemplate: Option[String] = None, cancelledTemplate: Option[String] = None, deliveryFreeAfter: Option[Float] = None, imageFilename: Option[String] = None, bannerFilename: Option[String] = None, directoryFilename: Option[String] = None, autoConfirm: Option[Int] = None, minimumPickupAmount: Option[Float] = None, enableOrderPeriod: Option[Int] = Some(0), enableDeliveryPeriod: Option[Int] = Some(0), enablePickupPeriod: Option[Int] = Some(0), orderStartDate: Option[java.sql.Timestamp] = None, orderEndDate: Option[java.sql.Timestamp] = None, deliveryStartDate: Option[java.sql.Timestamp] = None, deliveryEndDate: Option[java.sql.Timestamp] = None, pickupStartDate: Option[java.sql.Timestamp] = None, pickupEndDate: Option[java.sql.Timestamp] = None, noDeliveryDates: Option[String] = None, noPickupDates: Option[String] = None, largeOrderLeadTime: Option[Int] = Some(0), largeOrderLeadTimePickup: Option[Int] = Some(0), largeOrderAmount: Option[Float] = Some(0.0F), largeOrderAmountPickup: Option[Float] = Some(0.0F), summaryTemplate: Option[String] = None, merchantNotificationTemplate: Option[String] = None, cssTemplate: Option[String] = None, orderNumberFormat: Option[String] = Some("{{XXXXXX}}"), startingOrderNumber: Option[Int] = None, cssTemplateNew: Option[String] = None, instructionsForCustomers: Option[String] = None, homePageUrl: Option[String] = None, enableRemarkCompulsory: Option[Int] = Some(0), preventCheckoutIfBelowMinimumAmount: Option[Int] = Some(0), cuisineType: Option[String] = None, classification: Option[String] = None, displayDirectory: Option[Int] = None, deliveredTemplate: Option[String] = None, enableDeliveredMail: Option[Int] = Some(0), roundToFiveCents: Option[Int] = Some(0), country: Option[String] = None, gmtOffset: Option[Float] = None, shopbackTrackerId: Option[String] = None, cssTemplateNewv3: Option[String] = None, itemViewToggle: Option[Int] = Some(0), cartMetaTag: Option[String] = Some("Food delivery Singapore | Catering in Singapore | Delivery Singapore"), cartDesc: Option[String] = Some("Hungry now? Order your next meal online from today! We provide delivery and pickup/takeaway services."), cnameStatus: Option[Int] = Some(0)): MenuRow = {
+  def MenuRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, cname: Option[String] = None, subdomain: Option[String] = None, currencyCode: Option[String] = None, accountId: Option[String] = None, termsAndConditions: Option[String] = None, name: Option[String] = None, email: Option[String] = None, pendingTemplate: Option[String] = None, confirmedTemplate: Option[String] = None, cancelledTemplate: Option[String] = None, deliveryFreeAfter: Option[Float] = None, imageFilename: Option[String] = None, bannerFilename: Option[String] = None, directoryFilename: Option[String] = None, autoConfirm: Option[Int] = None, minimumPickupAmount: Option[Float] = None, enableOrderPeriod: Option[Int] = Some(0), enableDeliveryPeriod: Option[Int] = Some(0), enablePickupPeriod: Option[Int] = Some(0), orderStartDate: Option[DateTime] = None, orderEndDate: Option[DateTime] = None, deliveryStartDate: Option[DateTime] = None, deliveryEndDate: Option[DateTime] = None, pickupStartDate: Option[DateTime] = None, pickupEndDate: Option[DateTime] = None, noDeliveryDates: Option[String] = None, noPickupDates: Option[String] = None, largeOrderLeadTime: Option[Int] = Some(0), largeOrderLeadTimePickup: Option[Int] = Some(0), largeOrderAmount: Option[Float] = Some(0.0F), largeOrderAmountPickup: Option[Float] = Some(0.0F), summaryTemplate: Option[String] = None, merchantNotificationTemplate: Option[String] = None, cssTemplate: Option[String] = None, orderNumberFormat: Option[String] = Some("{{XXXXXX}}"), startingOrderNumber: Option[Int] = None, cssTemplateNew: Option[String] = None, instructionsForCustomers: Option[String] = None, homePageUrl: Option[String] = None, enableRemarkCompulsory: Option[Int] = Some(0), preventCheckoutIfBelowMinimumAmount: Option[Int] = Some(0), cuisineType: Option[String] = None, classification: Option[String] = None, displayDirectory: Option[Int] = None, deliveredTemplate: Option[String] = None, enableDeliveredMail: Option[Int] = Some(0), roundToFiveCents: Option[Int] = Some(0), country: Option[String] = None, gmtOffset: Option[Float] = None, shopbackTrackerId: Option[String] = None, cssTemplateNewv3: Option[String] = None, itemViewToggle: Option[Int] = Some(0), cartMetaTag: Option[String] = Some("Food delivery Singapore | Catering in Singapore | Delivery Singapore"), cartDesc: Option[String] = Some("Hungry now? Order your next meal online from today! We provide delivery and pickup/takeaway services."), cnameStatus: Option[Int] = Some(0)): MenuRow = {
     id :: version :: createdBy :: updatedBy :: createdOn :: updatedOn :: cname :: subdomain :: currencyCode :: accountId :: termsAndConditions :: name :: email :: pendingTemplate :: confirmedTemplate :: cancelledTemplate :: deliveryFreeAfter :: imageFilename :: bannerFilename :: directoryFilename :: autoConfirm :: minimumPickupAmount :: enableOrderPeriod :: enableDeliveryPeriod :: enablePickupPeriod :: orderStartDate :: orderEndDate :: deliveryStartDate :: deliveryEndDate :: pickupStartDate :: pickupEndDate :: noDeliveryDates :: noPickupDates :: largeOrderLeadTime :: largeOrderLeadTimePickup :: largeOrderAmount :: largeOrderAmountPickup :: summaryTemplate :: merchantNotificationTemplate :: cssTemplate :: orderNumberFormat :: startingOrderNumber :: cssTemplateNew :: instructionsForCustomers :: homePageUrl :: enableRemarkCompulsory :: preventCheckoutIfBelowMinimumAmount :: cuisineType :: classification :: displayDirectory :: deliveredTemplate :: enableDeliveredMail :: roundToFiveCents :: country :: gmtOffset :: shopbackTrackerId :: cssTemplateNewv3 :: itemViewToggle :: cartMetaTag :: cartDesc :: cnameStatus :: HNil
   }
   /** GetResult implicit for fetching MenuRow objects using plain SQL queries */
-  implicit def GetResultMenuRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[MenuRow] = GR{
+  implicit def GetResultMenuRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[MenuRow] = GR{
     prs => import prs._
-    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Int] :: HNil
+    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[DateTime] :: <<?[DateTime] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[DateTime] :: <<?[DateTime] :: <<?[DateTime] :: <<?[DateTime] :: <<?[DateTime] :: <<?[DateTime] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Int] :: HNil
   }
   /** Table description of table menu. Objects of this class serve as prototypes for rows in queries. */
   class Menu(_tableTag: Tag) extends Table[MenuRow](_tableTag, "menu") {
@@ -1655,9 +1655,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column cname SqlType(VARCHAR), Length(255,true), Default(None) */
     val cname: Rep[Option[String]] = column[Option[String]]("cname", O.Length(255,varying=true), O.Default(None))
     /** Database column subdomain SqlType(VARCHAR), Length(255,true), Default(None) */
@@ -1697,17 +1697,17 @@ trait Tables {
     /** Database column enable_pickup_period SqlType(INT), Default(Some(0)) */
     val enablePickupPeriod: Rep[Option[Int]] = column[Option[Int]]("enable_pickup_period", O.Default(Some(0)))
     /** Database column order_start_date SqlType(DATETIME), Default(None) */
-    val orderStartDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("order_start_date", O.Default(None))
+    val orderStartDate: Rep[Option[DateTime]] = column[Option[DateTime]]("order_start_date", O.Default(None))
     /** Database column order_end_date SqlType(DATETIME), Default(None) */
-    val orderEndDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("order_end_date", O.Default(None))
+    val orderEndDate: Rep[Option[DateTime]] = column[Option[DateTime]]("order_end_date", O.Default(None))
     /** Database column delivery_start_date SqlType(DATETIME), Default(None) */
-    val deliveryStartDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("delivery_start_date", O.Default(None))
+    val deliveryStartDate: Rep[Option[DateTime]] = column[Option[DateTime]]("delivery_start_date", O.Default(None))
     /** Database column delivery_end_date SqlType(DATETIME), Default(None) */
-    val deliveryEndDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("delivery_end_date", O.Default(None))
+    val deliveryEndDate: Rep[Option[DateTime]] = column[Option[DateTime]]("delivery_end_date", O.Default(None))
     /** Database column pickup_start_date SqlType(DATETIME), Default(None) */
-    val pickupStartDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("pickup_start_date", O.Default(None))
+    val pickupStartDate: Rep[Option[DateTime]] = column[Option[DateTime]]("pickup_start_date", O.Default(None))
     /** Database column pickup_end_date SqlType(DATETIME), Default(None) */
-    val pickupEndDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("pickup_end_date", O.Default(None))
+    val pickupEndDate: Rep[Option[DateTime]] = column[Option[DateTime]]("pickup_end_date", O.Default(None))
     /** Database column no_delivery_dates SqlType(TEXT), Default(None) */
     val noDeliveryDates: Rep[Option[String]] = column[Option[String]]("no_delivery_dates", O.Default(None))
     /** Database column no_pickup_dates SqlType(TEXT), Default(None) */
@@ -1793,11 +1793,11 @@ trait Tables {
    *  @param email Database column email SqlType(INT), Default(None)
    *  @param fax Database column fax SqlType(INT), Default(None)
    *  @param paymentOptionId Database column payment_option_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class MenuNotificationRow(id: String, version: Option[Int] = None, createdOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, updatedOn: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, notificationTemplateId: Option[String] = None, smsTemplate: Option[String] = None, emailHeaderTitle: Option[String] = None, emailSubject: Option[String] = None, emailTemplate: Option[String] = None, faxTemplate: Option[String] = None, sms: Option[Int] = None, email: Option[Int] = None, fax: Option[Int] = None, paymentOptionId: Option[String] = None)
+  case class MenuNotificationRow(id: String, version: Option[Int] = None, createdOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, updatedOn: Option[DateTime] = None, menuId: Option[String] = None, notificationTemplateId: Option[String] = None, smsTemplate: Option[String] = None, emailHeaderTitle: Option[String] = None, emailSubject: Option[String] = None, emailTemplate: Option[String] = None, faxTemplate: Option[String] = None, sms: Option[Int] = None, email: Option[Int] = None, fax: Option[Int] = None, paymentOptionId: Option[String] = None)
   /** GetResult implicit for fetching MenuNotificationRow objects using plain SQL queries */
-  implicit def GetResultMenuNotificationRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Option[String]]): GR[MenuNotificationRow] = GR{
+  implicit def GetResultMenuNotificationRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[DateTime]], e3: GR[Option[String]]): GR[MenuNotificationRow] = GR{
     prs => import prs._
-    MenuNotificationRow.tupled((<<[String], <<?[Int], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[String]))
+    MenuNotificationRow.tupled((<<[String], <<?[Int], <<?[DateTime], <<?[String], <<?[String], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[String]))
   }
   /** Table description of table menu_notification. Objects of this class serve as prototypes for rows in queries. */
   class MenuNotification(_tableTag: Tag) extends Table[MenuNotificationRow](_tableTag, "menu_notification") {
@@ -1810,13 +1810,13 @@ trait Tables {
     /** Database column version SqlType(INT), Default(None) */
     val version: Rep[Option[Int]] = column[Option[Int]]("version", O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column notification_template_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -1866,11 +1866,11 @@ trait Tables {
    *  @param isEditable Database column is_editable SqlType(INT), Default(None)
    *  @param isMerchantPreferenceEnabled Database column is_merchant_preference_enabled SqlType(INT), Default(None)
    *  @param displayOrder Database column display_order SqlType(INT), Default(None) */
-  case class NotificationTemplateRow(id: String, version: Option[Int] = None, createdOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, updatedOn: Option[java.sql.Timestamp] = None, notificationType: Option[String] = None, notificationStatusType: Option[Int] = None, notificationPaymentType: Option[Int] = None, smsTemplate: Option[String] = None, emailTemplate: Option[String] = None, emailHeaderTitle: Option[String] = None, emailSubject: Option[String] = None, faxTemplate: Option[String] = None, isEditable: Option[Int] = None, isMerchantPreferenceEnabled: Option[Int] = None, displayOrder: Option[Int] = None)
+  case class NotificationTemplateRow(id: String, version: Option[Int] = None, createdOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, updatedOn: Option[DateTime] = None, notificationType: Option[String] = None, notificationStatusType: Option[Int] = None, notificationPaymentType: Option[Int] = None, smsTemplate: Option[String] = None, emailTemplate: Option[String] = None, emailHeaderTitle: Option[String] = None, emailSubject: Option[String] = None, faxTemplate: Option[String] = None, isEditable: Option[Int] = None, isMerchantPreferenceEnabled: Option[Int] = None, displayOrder: Option[Int] = None)
   /** GetResult implicit for fetching NotificationTemplateRow objects using plain SQL queries */
-  implicit def GetResultNotificationTemplateRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Option[String]]): GR[NotificationTemplateRow] = GR{
+  implicit def GetResultNotificationTemplateRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[DateTime]], e3: GR[Option[String]]): GR[NotificationTemplateRow] = GR{
     prs => import prs._
-    NotificationTemplateRow.tupled((<<[String], <<?[Int], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int]))
+    NotificationTemplateRow.tupled((<<[String], <<?[Int], <<?[DateTime], <<?[String], <<?[String], <<?[DateTime], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int]))
   }
   /** Table description of table notification_template. Objects of this class serve as prototypes for rows in queries. */
   class NotificationTemplate(_tableTag: Tag) extends Table[NotificationTemplateRow](_tableTag, "notification_template") {
@@ -1883,13 +1883,13 @@ trait Tables {
     /** Database column version SqlType(INT), Default(None) */
     val version: Rep[Option[Int]] = column[Option[Int]]("version", O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column notification_type SqlType(VARCHAR), Length(45,true), Default(None) */
     val notificationType: Rep[Option[String]] = column[Option[String]]("notification_type", O.Length(45,varying=true), O.Default(None))
     /** Database column notification_status_type SqlType(INT), Default(None) */
@@ -1930,11 +1930,11 @@ trait Tables {
    *  @param amountType Database column amount_type SqlType(INT), Default(None)
    *  @param discountType Database column discount_type SqlType(INT), Default(None)
    *  @param promotionName Database column promotion_name SqlType(VARCHAR), Length(255,true), Default(None) */
-  case class OrderDiscountRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, promotionId: Option[String] = None, storeOrderId: Option[String] = None, description: Option[String] = None, amount: Option[Float] = None, amountType: Option[Int] = None, discountType: Option[Int] = None, promotionName: Option[String] = None)
+  case class OrderDiscountRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, promotionId: Option[String] = None, storeOrderId: Option[String] = None, description: Option[String] = None, amount: Option[Float] = None, amountType: Option[Int] = None, discountType: Option[Int] = None, promotionName: Option[String] = None)
   /** GetResult implicit for fetching OrderDiscountRow objects using plain SQL queries */
-  implicit def GetResultOrderDiscountRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[OrderDiscountRow] = GR{
+  implicit def GetResultOrderDiscountRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[OrderDiscountRow] = GR{
     prs => import prs._
-    OrderDiscountRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Int], <<?[Int], <<?[String]))
+    OrderDiscountRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Int], <<?[Int], <<?[String]))
   }
   /** Table description of table order_discount. Objects of this class serve as prototypes for rows in queries. */
   class OrderDiscount(_tableTag: Tag) extends Table[OrderDiscountRow](_tableTag, "order_discount") {
@@ -1951,9 +1951,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column promotion_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val promotionId: Rep[Option[String]] = column[Option[String]]("promotion_id", O.Length(32,varying=true), O.Default(None))
     /** Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -1987,11 +1987,11 @@ trait Tables {
    *  @param version Database column version SqlType(INT), Default(None)
    *  @param submitted Database column submitted SqlType(INT), Default(Some(0))
    *  @param recipients Database column recipients SqlType(TEXT), Default(None) */
-  case class OrderFormRow(id: String, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, email: Option[String] = None, name: Option[String] = None, dueDate: Option[java.sql.Timestamp] = None, version: Option[Int] = None, submitted: Option[Int] = Some(0), recipients: Option[String] = None)
+  case class OrderFormRow(id: String, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, email: Option[String] = None, name: Option[String] = None, dueDate: Option[DateTime] = None, version: Option[Int] = None, submitted: Option[Int] = Some(0), recipients: Option[String] = None)
   /** GetResult implicit for fetching OrderFormRow objects using plain SQL queries */
-  implicit def GetResultOrderFormRow(implicit e0: GR[String], e1: GR[Option[java.sql.Timestamp]], e2: GR[Option[String]], e3: GR[Option[Int]]): GR[OrderFormRow] = GR{
+  implicit def GetResultOrderFormRow(implicit e0: GR[String], e1: GR[Option[DateTime]], e2: GR[Option[String]], e3: GR[Option[Int]]): GR[OrderFormRow] = GR{
     prs => import prs._
-    OrderFormRow.tupled((<<[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[Int], <<?[Int], <<?[String]))
+    OrderFormRow.tupled((<<[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[DateTime], <<?[Int], <<?[Int], <<?[String]))
   }
   /** Table description of table order_form. Objects of this class serve as prototypes for rows in queries. */
   class OrderForm(_tableTag: Tag) extends Table[OrderFormRow](_tableTag, "order_form") {
@@ -2002,9 +2002,9 @@ trait Tables {
     /** Database column id SqlType(VARCHAR), PrimaryKey, Length(32,true) */
     val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(32,varying=true))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -2014,7 +2014,7 @@ trait Tables {
     /** Database column name SqlType(VARCHAR), Length(255,true), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
     /** Database column due_date SqlType(DATETIME), Default(None) */
-    val dueDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("due_date", O.Default(None))
+    val dueDate: Rep[Option[DateTime]] = column[Option[DateTime]]("due_date", O.Default(None))
     /** Database column version SqlType(INT), Default(None) */
     val version: Rep[Option[Int]] = column[Option[Int]]("version", O.Default(None))
     /** Database column submitted SqlType(INT), Default(Some(0)) */
@@ -2040,11 +2040,11 @@ trait Tables {
    *  @param orderItemId Database column order_item_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param ingredientReference Database column ingredient_reference SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param department Database column department SqlType(VARCHAR), Length(255,true), Default(None) */
-  case class OrderIngredientRow(id: String, version: Option[Int] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, variantIngredientReference: Option[String] = None, quantity: Option[Float] = None, name: Option[String] = None, unitType: Option[String] = None, bomNumber: Option[String] = None, orderItemId: Option[String] = None, ingredientReference: Option[String] = None, department: Option[String] = None)
+  case class OrderIngredientRow(id: String, version: Option[Int] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, variantIngredientReference: Option[String] = None, quantity: Option[Float] = None, name: Option[String] = None, unitType: Option[String] = None, bomNumber: Option[String] = None, orderItemId: Option[String] = None, ingredientReference: Option[String] = None, department: Option[String] = None)
   /** GetResult implicit for fetching OrderIngredientRow objects using plain SQL queries */
-  implicit def GetResultOrderIngredientRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Option[String]], e4: GR[Option[Float]]): GR[OrderIngredientRow] = GR{
+  implicit def GetResultOrderIngredientRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[DateTime]], e3: GR[Option[String]], e4: GR[Option[Float]]): GR[OrderIngredientRow] = GR{
     prs => import prs._
-    OrderIngredientRow.tupled((<<[String], <<?[Int], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
+    OrderIngredientRow.tupled((<<[String], <<?[Int], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table order_ingredient. Objects of this class serve as prototypes for rows in queries. */
   class OrderIngredient(_tableTag: Tag) extends Table[OrderIngredientRow](_tableTag, "order_ingredient") {
@@ -2057,9 +2057,9 @@ trait Tables {
     /** Database column version SqlType(INT), Default(None) */
     val version: Rep[Option[Int]] = column[Option[Int]]("version", O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -2103,11 +2103,11 @@ trait Tables {
    *  @param promotionReference Database column promotion_reference SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param addedViaPrompt Database column added_via_prompt SqlType(INT), Default(Some(0))
    *  @param isPromoItem Database column is_promo_item SqlType(INT), Default(Some(0)) */
-  case class OrderItemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, name: Option[String] = None, price: Option[Float] = None, quantity: Option[Int] = None, itemReference: Option[String] = None, storeOrderId: Option[String] = None, orderTagId: Option[String] = None, promotionReference: Option[String] = None, addedViaPrompt: Option[Int] = Some(0), isPromoItem: Option[Int] = Some(0))
+  case class OrderItemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, name: Option[String] = None, price: Option[Float] = None, quantity: Option[Int] = None, itemReference: Option[String] = None, storeOrderId: Option[String] = None, orderTagId: Option[String] = None, promotionReference: Option[String] = None, addedViaPrompt: Option[Int] = Some(0), isPromoItem: Option[Int] = Some(0))
   /** GetResult implicit for fetching OrderItemRow objects using plain SQL queries */
-  implicit def GetResultOrderItemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[OrderItemRow] = GR{
+  implicit def GetResultOrderItemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[OrderItemRow] = GR{
     prs => import prs._
-    OrderItemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Float], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int]))
+    OrderItemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Float], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int]))
   }
   /** Table description of table order_item. Objects of this class serve as prototypes for rows in queries. */
   class OrderItem(_tableTag: Tag) extends Table[OrderItemRow](_tableTag, "order_item") {
@@ -2124,9 +2124,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column name SqlType(VARCHAR), Length(255,true), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Length(255,varying=true), O.Default(None))
     /** Database column price SqlType(FLOAT), Default(None) */
@@ -2155,15 +2155,15 @@ trait Tables {
   lazy val OrderItem = new TableQuery(tag => new OrderItem(tag))
 
   /** Row type of table OrderPromotionv3 */
-  type OrderPromotionv3Row = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Time],HCons[Option[java.sql.Time],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+  type OrderPromotionv3Row = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[java.sql.Time],HCons[Option[java.sql.Time],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
   /** Constructor for OrderPromotionv3Row providing default values if available in the database schema. */
-  def OrderPromotionv3Row(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, enablePromoCode: Option[Int] = None, promoCodes: Option[String] = None, promoApplyTo: Option[Int] = None, customerUseTimes: Option[Int] = None, promoCodeLimit: Option[Int] = None, availableOn: Option[Int] = None, startDate: Option[java.sql.Timestamp] = None, endDate: Option[java.sql.Timestamp] = None, startTime: Option[java.sql.Time] = None, endTime: Option[java.sql.Time] = None, availableDays: Option[String] = None, applyToPlatform: Option[Int] = None, applyToDeliveryPickup: Option[Int] = None, excludePromos: Option[String] = None, promotionResultType: Option[Int] = None, promotionConditionType: Option[Int] = None, promoOrder: Option[Int] = None, description: Option[String] = None, name: Option[String] = None, conditionAmount: Option[Float] = None, conditionAmountType: Option[Int] = None, conditionQuantity: Option[Int] = None, conditionItemIds: Option[String] = None, conditionCategoryIds: Option[String] = None, resultAmount: Option[Float] = None, resultAmountType: Option[Int] = None, resultItemIds: Option[String] = None, resultCategoryIds: Option[String] = None, resultQuantity: Option[Int] = None, promotionReference: Option[String] = None, storeOrderId: Option[String] = None, appliedAbsoluteDiscountAmount: Option[Float] = None, appliedOrderItemReference: Option[String] = None, appliedOrderPromotionType: Option[Int] = None, isCustomiseStartEndTime: Option[Int] = None, isCustomiseAvailableDay: Option[Int] = None, isCustomiseStartEndDate: Option[Int] = Some(0), isShowOnShoppingCart: Option[Int] = Some(0), stackableOption: Option[Int] = Some(0)): OrderPromotionv3Row = {
+  def OrderPromotionv3Row(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, enablePromoCode: Option[Int] = None, promoCodes: Option[String] = None, promoApplyTo: Option[Int] = None, customerUseTimes: Option[Int] = None, promoCodeLimit: Option[Int] = None, availableOn: Option[Int] = None, startDate: Option[DateTime] = None, endDate: Option[DateTime] = None, startTime: Option[java.sql.Time] = None, endTime: Option[java.sql.Time] = None, availableDays: Option[String] = None, applyToPlatform: Option[Int] = None, applyToDeliveryPickup: Option[Int] = None, excludePromos: Option[String] = None, promotionResultType: Option[Int] = None, promotionConditionType: Option[Int] = None, promoOrder: Option[Int] = None, description: Option[String] = None, name: Option[String] = None, conditionAmount: Option[Float] = None, conditionAmountType: Option[Int] = None, conditionQuantity: Option[Int] = None, conditionItemIds: Option[String] = None, conditionCategoryIds: Option[String] = None, resultAmount: Option[Float] = None, resultAmountType: Option[Int] = None, resultItemIds: Option[String] = None, resultCategoryIds: Option[String] = None, resultQuantity: Option[Int] = None, promotionReference: Option[String] = None, storeOrderId: Option[String] = None, appliedAbsoluteDiscountAmount: Option[Float] = None, appliedOrderItemReference: Option[String] = None, appliedOrderPromotionType: Option[Int] = None, isCustomiseStartEndTime: Option[Int] = None, isCustomiseAvailableDay: Option[Int] = None, isCustomiseStartEndDate: Option[Int] = Some(0), isShowOnShoppingCart: Option[Int] = Some(0), stackableOption: Option[Int] = Some(0)): OrderPromotionv3Row = {
     id :: version :: createdBy :: updatedBy :: createdOn :: updatedOn :: enablePromoCode :: promoCodes :: promoApplyTo :: customerUseTimes :: promoCodeLimit :: availableOn :: startDate :: endDate :: startTime :: endTime :: availableDays :: applyToPlatform :: applyToDeliveryPickup :: excludePromos :: promotionResultType :: promotionConditionType :: promoOrder :: description :: name :: conditionAmount :: conditionAmountType :: conditionQuantity :: conditionItemIds :: conditionCategoryIds :: resultAmount :: resultAmountType :: resultItemIds :: resultCategoryIds :: resultQuantity :: promotionReference :: storeOrderId :: appliedAbsoluteDiscountAmount :: appliedOrderItemReference :: appliedOrderPromotionType :: isCustomiseStartEndTime :: isCustomiseAvailableDay :: isCustomiseStartEndDate :: isShowOnShoppingCart :: stackableOption :: HNil
   }
   /** GetResult implicit for fetching OrderPromotionv3Row objects using plain SQL queries */
-  implicit def GetResultOrderPromotionv3Row(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[java.sql.Time]], e5: GR[Option[Float]]): GR[OrderPromotionv3Row] = GR{
+  implicit def GetResultOrderPromotionv3Row(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[java.sql.Time]], e5: GR[Option[Float]]): GR[OrderPromotionv3Row] = GR{
     prs => import prs._
-    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Time] :: <<?[java.sql.Time] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: HNil
+    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[DateTime] :: <<?[DateTime] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[DateTime] :: <<?[DateTime] :: <<?[java.sql.Time] :: <<?[java.sql.Time] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: HNil
   }
   /** Table description of table order_promotionv3. Objects of this class serve as prototypes for rows in queries. */
   class OrderPromotionv3(_tableTag: Tag) extends Table[OrderPromotionv3Row](_tableTag, "order_promotionv3") {
@@ -2178,9 +2178,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column enable_promo_code SqlType(INT), Default(None) */
     val enablePromoCode: Rep[Option[Int]] = column[Option[Int]]("enable_promo_code", O.Default(None))
     /** Database column promo_codes SqlType(TEXT), Default(None) */
@@ -2194,9 +2194,9 @@ trait Tables {
     /** Database column available_on SqlType(INT), Default(None) */
     val availableOn: Rep[Option[Int]] = column[Option[Int]]("available_on", O.Default(None))
     /** Database column start_date SqlType(DATETIME), Default(None) */
-    val startDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("start_date", O.Default(None))
+    val startDate: Rep[Option[DateTime]] = column[Option[DateTime]]("start_date", O.Default(None))
     /** Database column end_date SqlType(DATETIME), Default(None) */
-    val endDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("end_date", O.Default(None))
+    val endDate: Rep[Option[DateTime]] = column[Option[DateTime]]("end_date", O.Default(None))
     /** Database column start_time SqlType(TIME), Default(None) */
     val startTime: Rep[Option[java.sql.Time]] = column[Option[java.sql.Time]]("start_time", O.Default(None))
     /** Database column end_time SqlType(TIME), Default(None) */
@@ -2275,11 +2275,11 @@ trait Tables {
    *  @param updatedOn Database column updated_on SqlType(DATETIME), Default(None)
    *  @param orderItemId Database column order_item_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param tagSubitemReference Database column tag_subitem_reference SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class OrderTagRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, orderItemId: Option[String] = None, tagSubitemReference: Option[String] = None)
+  case class OrderTagRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, orderItemId: Option[String] = None, tagSubitemReference: Option[String] = None)
   /** GetResult implicit for fetching OrderTagRow objects using plain SQL queries */
-  implicit def GetResultOrderTagRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[OrderTagRow] = GR{
+  implicit def GetResultOrderTagRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[OrderTagRow] = GR{
     prs => import prs._
-    OrderTagRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String]))
+    OrderTagRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String]))
   }
   /** Table description of table order_tag. Objects of this class serve as prototypes for rows in queries. */
   class OrderTag(_tableTag: Tag) extends Table[OrderTagRow](_tableTag, "order_tag") {
@@ -2296,9 +2296,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column order_item_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val orderItemId: Rep[Option[String]] = column[Option[String]]("order_item_id", O.Length(32,varying=true), O.Default(None))
     /** Database column tag_subitem_reference SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -2327,11 +2327,11 @@ trait Tables {
    *  @param dpType Database column dp_type SqlType(INT), Default(None)
    *  @param applyToDelivery Database column apply_to_delivery SqlType(INT), Default(None)
    *  @param taxOrder Database column tax_order SqlType(INT), Default(Some(0)) */
-  case class OrderTaxAndChargeRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, amount: Option[Float] = None, applyTo: Option[Int] = None, `type`: Option[Int] = None, description: Option[String] = None, inclusive: Option[Int] = None, external: Option[Int] = None, storeOrderId: Option[String] = None, dpType: Option[Int] = None, applyToDelivery: Option[Int] = None, taxOrder: Option[Int] = Some(0))
+  case class OrderTaxAndChargeRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, amount: Option[Float] = None, applyTo: Option[Int] = None, `type`: Option[Int] = None, description: Option[String] = None, inclusive: Option[Int] = None, external: Option[Int] = None, storeOrderId: Option[String] = None, dpType: Option[Int] = None, applyToDelivery: Option[Int] = None, taxOrder: Option[Int] = Some(0))
   /** GetResult implicit for fetching OrderTaxAndChargeRow objects using plain SQL queries */
-  implicit def GetResultOrderTaxAndChargeRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[OrderTaxAndChargeRow] = GR{
+  implicit def GetResultOrderTaxAndChargeRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[OrderTaxAndChargeRow] = GR{
     prs => import prs._
-    OrderTaxAndChargeRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Float], <<?[Int], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[Int]))
+    OrderTaxAndChargeRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Float], <<?[Int], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[Int]))
   }
   /** Table description of table order_tax_and_charge. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
@@ -2349,9 +2349,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column amount SqlType(FLOAT), Default(None) */
     val amount: Rep[Option[Float]] = column[Option[Float]]("amount", O.Default(None))
     /** Database column apply_to SqlType(INT), Default(None) */
@@ -2401,11 +2401,11 @@ trait Tables {
    *  @param secretKey Database column secret_key SqlType(TEXT), Default(None)
    *  @param locationNames Database column location_names SqlType(TEXT), Default(None)
    *  @param country Database column country SqlType(TEXT), Default(None) */
-  case class PartnerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, name: Option[String] = None, phone: Option[String] = None, email: Option[String] = None, apiKey: Option[String] = None, requestUrl: Option[String] = None, changeUrl: Option[String] = None, cancelUrl: Option[String] = None, statusUrl: Option[String] = None, isActive: Option[Int] = None, communicationMode: Option[Int] = Some(0), commonApiCredentials: Option[Int] = Some(0), secretKey: Option[String] = None, locationNames: Option[String] = None, country: Option[String] = None)
+  case class PartnerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, name: Option[String] = None, phone: Option[String] = None, email: Option[String] = None, apiKey: Option[String] = None, requestUrl: Option[String] = None, changeUrl: Option[String] = None, cancelUrl: Option[String] = None, statusUrl: Option[String] = None, isActive: Option[Int] = None, communicationMode: Option[Int] = Some(0), commonApiCredentials: Option[Int] = Some(0), secretKey: Option[String] = None, locationNames: Option[String] = None, country: Option[String] = None)
   /** GetResult implicit for fetching PartnerRow objects using plain SQL queries */
-  implicit def GetResultPartnerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[PartnerRow] = GR{
+  implicit def GetResultPartnerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[PartnerRow] = GR{
     prs => import prs._
-    PartnerRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String]))
+    PartnerRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table partner. Objects of this class serve as prototypes for rows in queries. */
   class Partner(_tableTag: Tag) extends Table[PartnerRow](_tableTag, "partner") {
@@ -2422,9 +2422,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column name SqlType(TEXT), Default(None) */
     val name: Rep[Option[String]] = column[Option[String]]("name", O.Default(None))
     /** Database column phone SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -2469,11 +2469,11 @@ trait Tables {
    *  @param status Database column status SqlType(INT), Default(None)
    *  @param deliveryRequestId Database column delivery_request_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param lastSentMail Database column last_sent_mail SqlType(DATETIME), Default(None) */
-  case class PartnerRequestRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, partnerId: Option[String] = None, ackKey: Option[String] = None, status: Option[Int] = None, deliveryRequestId: Option[String] = None, lastSentMail: Option[java.sql.Timestamp] = None)
+  case class PartnerRequestRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, partnerId: Option[String] = None, ackKey: Option[String] = None, status: Option[Int] = None, deliveryRequestId: Option[String] = None, lastSentMail: Option[DateTime] = None)
   /** GetResult implicit for fetching PartnerRequestRow objects using plain SQL queries */
-  implicit def GetResultPartnerRequestRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[PartnerRequestRow] = GR{
+  implicit def GetResultPartnerRequestRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[PartnerRequestRow] = GR{
     prs => import prs._
-    PartnerRequestRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[java.sql.Timestamp]))
+    PartnerRequestRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[DateTime]))
   }
   /** Table description of table partner_request. Objects of this class serve as prototypes for rows in queries. */
   class PartnerRequest(_tableTag: Tag) extends Table[PartnerRequestRow](_tableTag, "partner_request") {
@@ -2490,9 +2490,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column partner_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val partnerId: Rep[Option[String]] = column[Option[String]]("partner_id", O.Length(32,varying=true), O.Default(None))
     /** Database column ack_key SqlType(TEXT), Default(None) */
@@ -2502,7 +2502,7 @@ trait Tables {
     /** Database column delivery_request_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val deliveryRequestId: Rep[Option[String]] = column[Option[String]]("delivery_request_id", O.Length(32,varying=true), O.Default(None))
     /** Database column last_sent_mail SqlType(DATETIME), Default(None) */
-    val lastSentMail: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("last_sent_mail", O.Default(None))
+    val lastSentMail: Rep[Option[DateTime]] = column[Option[DateTime]]("last_sent_mail", O.Default(None))
   }
   /** Collection-like TableQuery object for table PartnerRequest */
   lazy val PartnerRequest = new TableQuery(tag => new PartnerRequest(tag))
@@ -2522,11 +2522,11 @@ trait Tables {
    *  @param currentLatitude Database column current_latitude SqlType(FLOAT), Default(None)
    *  @param currentLongitude Database column current_longitude SqlType(FLOAT), Default(None)
    *  @param partnerRequestId Database column partner_request_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class PartnerResponseRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, driverName: Option[String] = None, driverPhone: Option[String] = None, vehicleNumber: Option[String] = None, estimatedTime: Option[java.sql.Timestamp] = None, price: Option[Float] = None, currentLatitude: Option[Float] = None, currentLongitude: Option[Float] = None, partnerRequestId: Option[String] = None)
+  case class PartnerResponseRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, driverName: Option[String] = None, driverPhone: Option[String] = None, vehicleNumber: Option[String] = None, estimatedTime: Option[DateTime] = None, price: Option[Float] = None, currentLatitude: Option[Float] = None, currentLongitude: Option[Float] = None, partnerRequestId: Option[String] = None)
   /** GetResult implicit for fetching PartnerResponseRow objects using plain SQL queries */
-  implicit def GetResultPartnerResponseRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[PartnerResponseRow] = GR{
+  implicit def GetResultPartnerResponseRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[PartnerResponseRow] = GR{
     prs => import prs._
-    PartnerResponseRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[Float], <<?[Float], <<?[Float], <<?[String]))
+    PartnerResponseRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[DateTime], <<?[Float], <<?[Float], <<?[Float], <<?[String]))
   }
   /** Table description of table partner_response. Objects of this class serve as prototypes for rows in queries. */
   class PartnerResponse(_tableTag: Tag) extends Table[PartnerResponseRow](_tableTag, "partner_response") {
@@ -2543,9 +2543,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column driver_name SqlType(TEXT), Default(None) */
     val driverName: Rep[Option[String]] = column[Option[String]]("driver_name", O.Default(None))
     /** Database column driver_phone SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -2553,7 +2553,7 @@ trait Tables {
     /** Database column vehicle_number SqlType(VARCHAR), Length(32,true), Default(None) */
     val vehicleNumber: Rep[Option[String]] = column[Option[String]]("vehicle_number", O.Length(32,varying=true), O.Default(None))
     /** Database column estimated_time SqlType(DATETIME), Default(None) */
-    val estimatedTime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("estimated_time", O.Default(None))
+    val estimatedTime: Rep[Option[DateTime]] = column[Option[DateTime]]("estimated_time", O.Default(None))
     /** Database column price SqlType(FLOAT), Default(None) */
     val price: Rep[Option[Float]] = column[Option[Float]]("price", O.Default(None))
     /** Database column current_latitude SqlType(FLOAT), Default(None) */
@@ -2581,11 +2581,11 @@ trait Tables {
    *  @param clientSecret Database column client_secret SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param defaultName Database column default_name SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param isAvailable Database column is_available SqlType(INT), Default(None) */
-  case class PaymentRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, `type`: Option[Int] = None, paymentName: Option[String] = None, publicInformation: Option[String] = None, privateInformation: Option[String] = None, clientId: Option[String] = None, clientSecret: Option[String] = None, defaultName: Option[String] = None, isAvailable: Option[Int] = None)
+  case class PaymentRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, `type`: Option[Int] = None, paymentName: Option[String] = None, publicInformation: Option[String] = None, privateInformation: Option[String] = None, clientId: Option[String] = None, clientSecret: Option[String] = None, defaultName: Option[String] = None, isAvailable: Option[Int] = None)
   /** GetResult implicit for fetching PaymentRow objects using plain SQL queries */
-  implicit def GetResultPaymentRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[PaymentRow] = GR{
+  implicit def GetResultPaymentRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[PaymentRow] = GR{
     prs => import prs._
-    PaymentRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int]))
+    PaymentRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int]))
   }
   /** Table description of table payment. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
@@ -2603,9 +2603,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column type SqlType(INT), Default(None)
      *  NOTE: The name was escaped because it collided with a Scala keyword. */
     val `type`: Rep[Option[Int]] = column[Option[Int]]("type", O.Default(None))
@@ -2646,11 +2646,11 @@ trait Tables {
    *  @param paymentName Database column payment_name SqlType(VARCHAR), Length(255,true), Default(None)
    *  @param isEnabled Database column is_enabled SqlType(INT), Default(Some(0))
    *  @param paymentLinkStatus Database column payment_link_status SqlType(INT), Default(None) */
-  case class PaymentOptionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, `type`: Option[Int] = None, displayOnShoppingCart: Option[Int] = None, publicInformation: Option[String] = None, privateInformation: Option[String] = None, clientId: Option[String] = None, clientSecret: Option[String] = None, menuId: Option[String] = None, paymentId: Option[String] = None, accountNumber: Option[String] = None, paymentName: Option[String] = None, isEnabled: Option[Int] = Some(0), paymentLinkStatus: Option[Int] = None)
+  case class PaymentOptionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, `type`: Option[Int] = None, displayOnShoppingCart: Option[Int] = None, publicInformation: Option[String] = None, privateInformation: Option[String] = None, clientId: Option[String] = None, clientSecret: Option[String] = None, menuId: Option[String] = None, paymentId: Option[String] = None, accountNumber: Option[String] = None, paymentName: Option[String] = None, isEnabled: Option[Int] = Some(0), paymentLinkStatus: Option[Int] = None)
   /** GetResult implicit for fetching PaymentOptionRow objects using plain SQL queries */
-  implicit def GetResultPaymentOptionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[PaymentOptionRow] = GR{
+  implicit def GetResultPaymentOptionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[PaymentOptionRow] = GR{
     prs => import prs._
-    PaymentOptionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int]))
+    PaymentOptionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int]))
   }
   /** Table description of table payment_option. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
@@ -2668,9 +2668,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column type SqlType(INT), Default(None)
      *  NOTE: The name was escaped because it collided with a Scala keyword. */
     val `type`: Rep[Option[Int]] = column[Option[Int]]("type", O.Default(None))
@@ -2715,11 +2715,11 @@ trait Tables {
    *  @param percentCut Database column percent_cut SqlType(FLOAT), Default(None)
    *  @param dollarCut Database column dollar_cut SqlType(FLOAT), Default(None)
    *  @param paymentRateType Database column payment_rate_type SqlType(INT), Default(None) */
-  case class PaymentRateHistoryRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, percentCut: Option[Float] = None, dollarCut: Option[Float] = None, paymentRateType: Option[Int] = None)
+  case class PaymentRateHistoryRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, percentCut: Option[Float] = None, dollarCut: Option[Float] = None, paymentRateType: Option[Int] = None)
   /** GetResult implicit for fetching PaymentRateHistoryRow objects using plain SQL queries */
-  implicit def GetResultPaymentRateHistoryRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[PaymentRateHistoryRow] = GR{
+  implicit def GetResultPaymentRateHistoryRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[PaymentRateHistoryRow] = GR{
     prs => import prs._
-    PaymentRateHistoryRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Float], <<?[Float], <<?[Int]))
+    PaymentRateHistoryRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Float], <<?[Float], <<?[Int]))
   }
   /** Table description of table payment_rate_history. Objects of this class serve as prototypes for rows in queries. */
   class PaymentRateHistory(_tableTag: Tag) extends Table[PaymentRateHistoryRow](_tableTag, "payment_rate_history") {
@@ -2736,9 +2736,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column percent_cut SqlType(FLOAT), Default(None) */
     val percentCut: Rep[Option[Float]] = column[Option[Float]]("percent_cut", O.Default(None))
     /** Database column dollar_cut SqlType(FLOAT), Default(None) */
@@ -2759,11 +2759,11 @@ trait Tables {
    *  @param permissionType Database column permission_type SqlType(VARCHAR), Length(45,true), Default(None)
    *  @param accessType Database column access_type SqlType(INT), Default(None)
    *  @param permissionId Database column permission_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class PermissionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, permissionType: Option[String] = None, accessType: Option[Int] = None, permissionId: Option[String] = None)
+  case class PermissionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, permissionType: Option[String] = None, accessType: Option[Int] = None, permissionId: Option[String] = None)
   /** GetResult implicit for fetching PermissionRow objects using plain SQL queries */
-  implicit def GetResultPermissionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[PermissionRow] = GR{
+  implicit def GetResultPermissionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[PermissionRow] = GR{
     prs => import prs._
-    PermissionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[String]))
+    PermissionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[String]))
   }
   /** Table description of table permission. Objects of this class serve as prototypes for rows in queries. */
   class Permission(_tableTag: Tag) extends Table[PermissionRow](_tableTag, "permission") {
@@ -2780,9 +2780,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column permission_type SqlType(VARCHAR), Length(45,true), Default(None) */
     val permissionType: Rep[Option[String]] = column[Option[String]]("permission_type", O.Length(45,varying=true), O.Default(None))
     /** Database column access_type SqlType(INT), Default(None) */
@@ -2801,11 +2801,11 @@ trait Tables {
    *  @param series Database column series SqlType(VARCHAR), PrimaryKey, Length(64,true)
    *  @param token Database column token SqlType(VARCHAR), Length(64,true)
    *  @param lastUsed Database column last_used SqlType(TIMESTAMP) */
-  case class PersistentLoginsRow(username: String, series: String, token: String, lastUsed: java.sql.Timestamp)
+  case class PersistentLoginsRow(username: String, series: String, token: String, lastUsed: DateTime)
   /** GetResult implicit for fetching PersistentLoginsRow objects using plain SQL queries */
-  implicit def GetResultPersistentLoginsRow(implicit e0: GR[String], e1: GR[java.sql.Timestamp]): GR[PersistentLoginsRow] = GR{
+  implicit def GetResultPersistentLoginsRow(implicit e0: GR[String], e1: GR[DateTime]): GR[PersistentLoginsRow] = GR{
     prs => import prs._
-    PersistentLoginsRow.tupled((<<[String], <<[String], <<[String], <<[java.sql.Timestamp]))
+    PersistentLoginsRow.tupled((<<[String], <<[String], <<[String], <<[DateTime]))
   }
   /** Table description of table persistent_logins. Objects of this class serve as prototypes for rows in queries. */
   class PersistentLogins(_tableTag: Tag) extends Table[PersistentLoginsRow](_tableTag, "persistent_logins") {
@@ -2820,21 +2820,21 @@ trait Tables {
     /** Database column token SqlType(VARCHAR), Length(64,true) */
     val token: Rep[String] = column[String]("token", O.Length(64,varying=true))
     /** Database column last_used SqlType(TIMESTAMP) */
-    val lastUsed: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("last_used")
+    val lastUsed: Rep[DateTime] = column[DateTime]("last_used")
   }
   /** Collection-like TableQuery object for table PersistentLogins */
   lazy val PersistentLogins = new TableQuery(tag => new PersistentLogins(tag))
 
   /** Row type of table Promotion */
-  type PromotionRow = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[Float],HCons[Option[String],HCons[Option[Int],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Time],HCons[Option[java.sql.Time],HCons[Option[Int],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]
+  type PromotionRow = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[Float],HCons[Option[String],HCons[Option[Int],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Time],HCons[Option[java.sql.Time],HCons[Option[Int],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]
   /** Constructor for PromotionRow providing default values if available in the database schema. */
-  def PromotionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, conditionalIdsType: Option[Int] = None, conditionalIds: Option[String] = None, conditionalAmount: Option[Float] = None, conditionalType: Option[Int] = None, promotionalAmountType: Option[Int] = None, promotionalAmount: Option[Float] = None, name: Option[String] = None, availability: Option[Int] = None, startDateTime: Option[java.sql.Timestamp] = None, endDateTime: Option[java.sql.Timestamp] = None, promotionalIds: Option[String] = None, promotionalType: Option[Int] = None, codes: Option[String] = None, description: Option[String] = None, codesInstruction: Option[String] = None, dayInWeek: Option[String] = None, intervalStartTime: Option[java.sql.Time] = None, intervalEndTime: Option[java.sql.Time] = None, showOnShoppingCart: Option[Int] = Some(1)): PromotionRow = {
+  def PromotionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, menuId: Option[String] = None, conditionalIdsType: Option[Int] = None, conditionalIds: Option[String] = None, conditionalAmount: Option[Float] = None, conditionalType: Option[Int] = None, promotionalAmountType: Option[Int] = None, promotionalAmount: Option[Float] = None, name: Option[String] = None, availability: Option[Int] = None, startDateTime: Option[DateTime] = None, endDateTime: Option[DateTime] = None, promotionalIds: Option[String] = None, promotionalType: Option[Int] = None, codes: Option[String] = None, description: Option[String] = None, codesInstruction: Option[String] = None, dayInWeek: Option[String] = None, intervalStartTime: Option[java.sql.Time] = None, intervalEndTime: Option[java.sql.Time] = None, showOnShoppingCart: Option[Int] = Some(1)): PromotionRow = {
     id :: version :: createdBy :: updatedBy :: createdOn :: updatedOn :: menuId :: conditionalIdsType :: conditionalIds :: conditionalAmount :: conditionalType :: promotionalAmountType :: promotionalAmount :: name :: availability :: startDateTime :: endDateTime :: promotionalIds :: promotionalType :: codes :: description :: codesInstruction :: dayInWeek :: intervalStartTime :: intervalEndTime :: showOnShoppingCart :: HNil
   }
   /** GetResult implicit for fetching PromotionRow objects using plain SQL queries */
-  implicit def GetResultPromotionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]], e5: GR[Option[java.sql.Time]]): GR[PromotionRow] = GR{
+  implicit def GetResultPromotionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]], e5: GR[Option[java.sql.Time]]): GR[PromotionRow] = GR{
     prs => import prs._
-    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[Float] :: <<?[String] :: <<?[Int] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[java.sql.Time] :: <<?[java.sql.Time] :: <<?[Int] :: HNil
+    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[DateTime] :: <<?[DateTime] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[Float] :: <<?[String] :: <<?[Int] :: <<?[DateTime] :: <<?[DateTime] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[java.sql.Time] :: <<?[java.sql.Time] :: <<?[Int] :: HNil
   }
   /** Table description of table promotion. Objects of this class serve as prototypes for rows in queries. */
   class Promotion(_tableTag: Tag) extends Table[PromotionRow](_tableTag, "promotion") {
@@ -2849,9 +2849,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column conditional_ids_type SqlType(INT), Default(None) */
@@ -2871,9 +2871,9 @@ trait Tables {
     /** Database column availability SqlType(INT), Default(None) */
     val availability: Rep[Option[Int]] = column[Option[Int]]("availability", O.Default(None))
     /** Database column start_date_time SqlType(DATETIME), Default(None) */
-    val startDateTime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("start_date_time", O.Default(None))
+    val startDateTime: Rep[Option[DateTime]] = column[Option[DateTime]]("start_date_time", O.Default(None))
     /** Database column end_date_time SqlType(DATETIME), Default(None) */
-    val endDateTime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("end_date_time", O.Default(None))
+    val endDateTime: Rep[Option[DateTime]] = column[Option[DateTime]]("end_date_time", O.Default(None))
     /** Database column promotional_ids SqlType(TEXT), Default(None) */
     val promotionalIds: Rep[Option[String]] = column[Option[String]]("promotional_ids", O.Default(None))
     /** Database column promotional_type SqlType(INT), Default(None) */
@@ -2900,15 +2900,15 @@ trait Tables {
   lazy val Promotion = new TableQuery(tag => new Promotion(tag))
 
   /** Row type of table Promotionv3 */
-  type Promotionv3Row = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Time],HCons[Option[java.sql.Time],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+  type Promotionv3Row = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[java.sql.Time],HCons[Option[java.sql.Time],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
   /** Constructor for Promotionv3Row providing default values if available in the database schema. */
-  def Promotionv3Row(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, enablePromoCode: Option[Int] = None, promoCodes: Option[String] = None, promoApplyTo: Option[Int] = None, customerUseTimes: Option[Int] = None, promoCodeLimit: Option[Int] = None, availableOn: Option[Int] = None, startDate: Option[java.sql.Timestamp] = None, endDate: Option[java.sql.Timestamp] = None, startTime: Option[java.sql.Time] = None, endTime: Option[java.sql.Time] = None, availableDays: Option[String] = None, applyToPlatform: Option[Int] = None, applyToDeliveryPickup: Option[Int] = None, excludePromos: Option[String] = None, promotionResultType: Option[Int] = None, promotionConditionType: Option[Int] = None, promoOrder: Option[Int] = None, description: Option[String] = None, name: Option[String] = None, conditionAmount: Option[Float] = None, conditionAmountType: Option[Int] = None, conditionQuantity: Option[Int] = None, conditionItemIds: Option[String] = None, conditionCategoryIds: Option[String] = None, resultAmount: Option[Float] = None, resultAmountType: Option[Int] = None, resultItemIds: Option[String] = None, resultCategoryIds: Option[String] = None, resultQuantity: Option[Int] = None, menuId: Option[String] = None, isCustomiseStartEndTime: Option[Int] = None, isCustomiseAvailableDay: Option[Int] = None, isCustomiseStartEndDate: Option[Int] = Some(0), isShowOnShoppingCart: Option[Int] = Some(0), stackableOption: Option[Int] = Some(0)): Promotionv3Row = {
+  def Promotionv3Row(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, enablePromoCode: Option[Int] = None, promoCodes: Option[String] = None, promoApplyTo: Option[Int] = None, customerUseTimes: Option[Int] = None, promoCodeLimit: Option[Int] = None, availableOn: Option[Int] = None, startDate: Option[DateTime] = None, endDate: Option[DateTime] = None, startTime: Option[java.sql.Time] = None, endTime: Option[java.sql.Time] = None, availableDays: Option[String] = None, applyToPlatform: Option[Int] = None, applyToDeliveryPickup: Option[Int] = None, excludePromos: Option[String] = None, promotionResultType: Option[Int] = None, promotionConditionType: Option[Int] = None, promoOrder: Option[Int] = None, description: Option[String] = None, name: Option[String] = None, conditionAmount: Option[Float] = None, conditionAmountType: Option[Int] = None, conditionQuantity: Option[Int] = None, conditionItemIds: Option[String] = None, conditionCategoryIds: Option[String] = None, resultAmount: Option[Float] = None, resultAmountType: Option[Int] = None, resultItemIds: Option[String] = None, resultCategoryIds: Option[String] = None, resultQuantity: Option[Int] = None, menuId: Option[String] = None, isCustomiseStartEndTime: Option[Int] = None, isCustomiseAvailableDay: Option[Int] = None, isCustomiseStartEndDate: Option[Int] = Some(0), isShowOnShoppingCart: Option[Int] = Some(0), stackableOption: Option[Int] = Some(0)): Promotionv3Row = {
     id :: version :: createdBy :: updatedBy :: createdOn :: updatedOn :: enablePromoCode :: promoCodes :: promoApplyTo :: customerUseTimes :: promoCodeLimit :: availableOn :: startDate :: endDate :: startTime :: endTime :: availableDays :: applyToPlatform :: applyToDeliveryPickup :: excludePromos :: promotionResultType :: promotionConditionType :: promoOrder :: description :: name :: conditionAmount :: conditionAmountType :: conditionQuantity :: conditionItemIds :: conditionCategoryIds :: resultAmount :: resultAmountType :: resultItemIds :: resultCategoryIds :: resultQuantity :: menuId :: isCustomiseStartEndTime :: isCustomiseAvailableDay :: isCustomiseStartEndDate :: isShowOnShoppingCart :: stackableOption :: HNil
   }
   /** GetResult implicit for fetching Promotionv3Row objects using plain SQL queries */
-  implicit def GetResultPromotionv3Row(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[java.sql.Time]], e5: GR[Option[Float]]): GR[Promotionv3Row] = GR{
+  implicit def GetResultPromotionv3Row(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[java.sql.Time]], e5: GR[Option[Float]]): GR[Promotionv3Row] = GR{
     prs => import prs._
-    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Time] :: <<?[java.sql.Time] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: HNil
+    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[DateTime] :: <<?[DateTime] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[DateTime] :: <<?[DateTime] :: <<?[java.sql.Time] :: <<?[java.sql.Time] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: HNil
   }
   /** Table description of table promotionv3. Objects of this class serve as prototypes for rows in queries. */
   class Promotionv3(_tableTag: Tag) extends Table[Promotionv3Row](_tableTag, "promotionv3") {
@@ -2923,9 +2923,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column enable_promo_code SqlType(INT), Default(None) */
     val enablePromoCode: Rep[Option[Int]] = column[Option[Int]]("enable_promo_code", O.Default(None))
     /** Database column promo_codes SqlType(TEXT), Default(None) */
@@ -2939,9 +2939,9 @@ trait Tables {
     /** Database column available_on SqlType(INT), Default(None) */
     val availableOn: Rep[Option[Int]] = column[Option[Int]]("available_on", O.Default(None))
     /** Database column start_date SqlType(DATETIME), Default(None) */
-    val startDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("start_date", O.Default(None))
+    val startDate: Rep[Option[DateTime]] = column[Option[DateTime]]("start_date", O.Default(None))
     /** Database column end_date SqlType(DATETIME), Default(None) */
-    val endDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("end_date", O.Default(None))
+    val endDate: Rep[Option[DateTime]] = column[Option[DateTime]]("end_date", O.Default(None))
     /** Database column start_time SqlType(TIME), Default(None) */
     val startTime: Rep[Option[java.sql.Time]] = column[Option[java.sql.Time]]("start_time", O.Default(None))
     /** Database column end_time SqlType(TIME), Default(None) */
@@ -3014,11 +3014,11 @@ trait Tables {
    *  @param cartScript Database column cart_script SqlType(TEXT), Default(None)
    *  @param checkoutScript Database column checkout_script SqlType(TEXT), Default(None)
    *  @param thankYouScript Database column thank_you_script SqlType(TEXT), Default(None) */
-  case class ShoppingCartScriptRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, cartScript: Option[String] = None, checkoutScript: Option[String] = None, thankYouScript: Option[String] = None)
+  case class ShoppingCartScriptRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, menuId: Option[String] = None, cartScript: Option[String] = None, checkoutScript: Option[String] = None, thankYouScript: Option[String] = None)
   /** GetResult implicit for fetching ShoppingCartScriptRow objects using plain SQL queries */
-  implicit def GetResultShoppingCartScriptRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[ShoppingCartScriptRow] = GR{
+  implicit def GetResultShoppingCartScriptRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[ShoppingCartScriptRow] = GR{
     prs => import prs._
-    ShoppingCartScriptRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String]))
+    ShoppingCartScriptRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table shopping_cart_script. Objects of this class serve as prototypes for rows in queries. */
   class ShoppingCartScript(_tableTag: Tag) extends Table[ShoppingCartScriptRow](_tableTag, "shopping_cart_script") {
@@ -3035,9 +3035,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column cart_script SqlType(TEXT), Default(None) */
@@ -3065,11 +3065,11 @@ trait Tables {
    *  @param webpageType Database column webpage_type SqlType(INT), Default(None)
    *  @param appendType Database column append_type SqlType(INT), Default(None)
    *  @param trackerScript Database column tracker_script SqlType(TEXT), Default(None) */
-  case class ShoppingCartTrackerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, name: Option[String] = None, webpageType: Option[Int] = None, appendType: Option[Int] = None, trackerScript: Option[String] = None)
+  case class ShoppingCartTrackerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, menuId: Option[String] = None, name: Option[String] = None, webpageType: Option[Int] = None, appendType: Option[Int] = None, trackerScript: Option[String] = None)
   /** GetResult implicit for fetching ShoppingCartTrackerRow objects using plain SQL queries */
-  implicit def GetResultShoppingCartTrackerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[ShoppingCartTrackerRow] = GR{
+  implicit def GetResultShoppingCartTrackerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[ShoppingCartTrackerRow] = GR{
     prs => import prs._
-    ShoppingCartTrackerRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[String]))
+    ShoppingCartTrackerRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[String]))
   }
   /** Table description of table shopping_cart_tracker. Objects of this class serve as prototypes for rows in queries. */
   class ShoppingCartTracker(_tableTag: Tag) extends Table[ShoppingCartTrackerRow](_tableTag, "shopping_cart_tracker") {
@@ -3086,9 +3086,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column name SqlType(VARCHAR), Length(45,true), Default(None) */
@@ -3118,11 +3118,11 @@ trait Tables {
    *  @param errorDescription Database column error_description SqlType(TEXT), Default(None)
    *  @param messageId Database column message_id SqlType(TEXT), Default(None)
    *  @param storeOrderId Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class SmsBlacklistRow(id: String = "", version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, phone: Option[String] = None, errorCode: Option[String] = None, errorDescription: Option[String] = None, messageId: Option[String] = None, storeOrderId: Option[String] = None)
+  case class SmsBlacklistRow(id: String = "", version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, phone: Option[String] = None, errorCode: Option[String] = None, errorDescription: Option[String] = None, messageId: Option[String] = None, storeOrderId: Option[String] = None)
   /** GetResult implicit for fetching SmsBlacklistRow objects using plain SQL queries */
-  implicit def GetResultSmsBlacklistRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[SmsBlacklistRow] = GR{
+  implicit def GetResultSmsBlacklistRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[SmsBlacklistRow] = GR{
     prs => import prs._
-    SmsBlacklistRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
+    SmsBlacklistRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table sms_blacklist. Objects of this class serve as prototypes for rows in queries. */
   class SmsBlacklist(_tableTag: Tag) extends Table[SmsBlacklistRow](_tableTag, "sms_blacklist") {
@@ -3139,9 +3139,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column phone SqlType(VARCHAR), Length(32,true), Default(None) */
     val phone: Rep[Option[String]] = column[Option[String]]("phone", O.Length(32,varying=true), O.Default(None))
     /** Database column error_code SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -3172,11 +3172,11 @@ trait Tables {
    *  @param failCount Database column fail_count SqlType(INT), Default(Some(0))
    *  @param storeOrderId Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param notificationType Database column notification_type SqlType(VARCHAR), Length(255,true), Default(None) */
-  case class SmsLogRow(id: String, version: Option[Int] = None, createdOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, updatedOn: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, accountId: Option[String] = None, phone: Option[String] = None, status: Option[String] = None, isBillable: Option[Int] = None, messageSid: Option[String] = None, failCount: Option[Int] = Some(0), storeOrderId: Option[String] = None, notificationType: Option[String] = None)
+  case class SmsLogRow(id: String, version: Option[Int] = None, createdOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, updatedOn: Option[DateTime] = None, menuId: Option[String] = None, accountId: Option[String] = None, phone: Option[String] = None, status: Option[String] = None, isBillable: Option[Int] = None, messageSid: Option[String] = None, failCount: Option[Int] = Some(0), storeOrderId: Option[String] = None, notificationType: Option[String] = None)
   /** GetResult implicit for fetching SmsLogRow objects using plain SQL queries */
-  implicit def GetResultSmsLogRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Option[String]]): GR[SmsLogRow] = GR{
+  implicit def GetResultSmsLogRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[DateTime]], e3: GR[Option[String]]): GR[SmsLogRow] = GR{
     prs => import prs._
-    SmsLogRow.tupled((<<[String], <<?[Int], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[Int], <<?[String], <<?[String]))
+    SmsLogRow.tupled((<<[String], <<?[Int], <<?[DateTime], <<?[String], <<?[String], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[Int], <<?[String], <<?[String]))
   }
   /** Table description of table sms_log. Objects of this class serve as prototypes for rows in queries. */
   class SmsLog(_tableTag: Tag) extends Table[SmsLogRow](_tableTag, "sms_log") {
@@ -3189,13 +3189,13 @@ trait Tables {
     /** Database column version SqlType(INT), Default(None) */
     val version: Rep[Option[Int]] = column[Option[Int]]("version", O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column account_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -3219,15 +3219,15 @@ trait Tables {
   lazy val SmsLog = new TableQuery(tag => new SmsLog(tag))
 
   /** Row type of table Store */
-  type StoreRow = HCons[String,HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Float],HCons[Option[Float],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+  type StoreRow = HCons[String,HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[Int],HCons[Option[Float],HCons[Option[Float],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
   /** Constructor for StoreRow providing default values if available in the database schema. */
-  def StoreRow(id: String, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, version: Option[Int] = None, name: Option[String] = None, email: Option[String] = None, apiKey: Option[String] = None, allowApiKey: Option[Int] = None, phone: Option[String] = None, accountId: Option[String] = None, address: Option[String] = None, addressTwo: Option[String] = None, state: Option[String] = None, city: Option[String] = None, country: Option[String] = None, postal: Option[String] = None, advanceOrderLengthInDays: Option[Int] = None, hasAdvanceOrder: Option[Int] = None, open: Option[Int] = None, zone: Option[String] = None, termsAndConditions: Option[String] = None, gmtOffset: Option[Float] = None, latitude: Option[Float] = None, longitude: Option[Float] = None, menuId: Option[String] = None, enablePickup: Option[Int] = None, enableDelivery: Option[Int] = None, isDeleted: Option[Int] = Some(0), fax: Option[String] = None, deliveryPartnerAccessKey: Option[String] = None, deliveryPartnerSecretKey: Option[String] = None, deliveryContactName: Option[String] = None, deliveryContactEmail: Option[String] = None, deliveryContactPhone: Option[String] = None, showAddressOnCart: Option[Int] = Some(1), enableAutoDelivery: Option[Int] = None, autoDeliveryLimit: Option[Float] = None, minimumPickupAmount: Option[Float] = Some(0.0F)): StoreRow = {
+  def StoreRow(id: String, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, version: Option[Int] = None, name: Option[String] = None, email: Option[String] = None, apiKey: Option[String] = None, allowApiKey: Option[Int] = None, phone: Option[String] = None, accountId: Option[String] = None, address: Option[String] = None, addressTwo: Option[String] = None, state: Option[String] = None, city: Option[String] = None, country: Option[String] = None, postal: Option[String] = None, advanceOrderLengthInDays: Option[Int] = None, hasAdvanceOrder: Option[Int] = None, open: Option[Int] = None, zone: Option[String] = None, termsAndConditions: Option[String] = None, gmtOffset: Option[Float] = None, latitude: Option[Float] = None, longitude: Option[Float] = None, menuId: Option[String] = None, enablePickup: Option[Int] = None, enableDelivery: Option[Int] = None, isDeleted: Option[Int] = Some(0), fax: Option[String] = None, deliveryPartnerAccessKey: Option[String] = None, deliveryPartnerSecretKey: Option[String] = None, deliveryContactName: Option[String] = None, deliveryContactEmail: Option[String] = None, deliveryContactPhone: Option[String] = None, showAddressOnCart: Option[Int] = Some(1), enableAutoDelivery: Option[Int] = None, autoDeliveryLimit: Option[Float] = None, minimumPickupAmount: Option[Float] = Some(0.0F)): StoreRow = {
     id :: createdOn :: updatedOn :: createdBy :: updatedBy :: version :: name :: email :: apiKey :: allowApiKey :: phone :: accountId :: address :: addressTwo :: state :: city :: country :: postal :: advanceOrderLengthInDays :: hasAdvanceOrder :: open :: zone :: termsAndConditions :: gmtOffset :: latitude :: longitude :: menuId :: enablePickup :: enableDelivery :: isDeleted :: fax :: deliveryPartnerAccessKey :: deliveryPartnerSecretKey :: deliveryContactName :: deliveryContactEmail :: deliveryContactPhone :: showAddressOnCart :: enableAutoDelivery :: autoDeliveryLimit :: minimumPickupAmount :: HNil
   }
   /** GetResult implicit for fetching StoreRow objects using plain SQL queries */
-  implicit def GetResultStoreRow(implicit e0: GR[String], e1: GR[Option[java.sql.Timestamp]], e2: GR[Option[String]], e3: GR[Option[Int]], e4: GR[Option[Float]]): GR[StoreRow] = GR{
+  implicit def GetResultStoreRow(implicit e0: GR[String], e1: GR[Option[DateTime]], e2: GR[Option[String]], e3: GR[Option[Int]], e4: GR[Option[Float]]): GR[StoreRow] = GR{
     prs => import prs._
-    <<[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Float] :: <<?[Float] :: HNil
+    <<[String] :: <<?[DateTime] :: <<?[DateTime] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[Int] :: <<?[Float] :: <<?[Float] :: HNil
   }
   /** Table description of table store. Objects of this class serve as prototypes for rows in queries. */
   class Store(_tableTag: Tag) extends Table[StoreRow](_tableTag, "store") {
@@ -3236,9 +3236,9 @@ trait Tables {
     /** Database column id SqlType(VARCHAR), PrimaryKey, Length(32,true) */
     val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(32,varying=true))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -3324,15 +3324,15 @@ trait Tables {
   lazy val Store = new TableQuery(tag => new Store(tag))
 
   /** Row type of table StoreOrder */
-  type StoreOrderRow = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[java.sql.Timestamp],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[java.sql.Timestamp],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+  type StoreOrderRow = HCons[String,HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[DateTime],HCons[Option[DateTime],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Int],HCons[Option[Int],HCons[Option[DateTime],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[Float],HCons[Option[Float],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Int],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[String],HCons[Option[Float],HCons[Option[String],HNil]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
   /** Constructor for StoreOrderRow providing default values if available in the database schema. */
-  def StoreOrderRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, customerId: Option[String] = None, storeId: Option[String] = None, pickup: Option[Int] = None, customerRemark: Option[String] = None, kitchenRemark: Option[String] = None, deliveryCost: Option[Float] = None, status: Option[Int] = None, paymentType: Option[Int] = None, deliveryDate: Option[java.sql.Timestamp] = None, paymentDueDate: Option[java.sql.Timestamp] = None, orderNumber: Option[String] = None, paymentStatus: Option[Int] = None, customerAddress: Option[String] = None, customerAddressOne: Option[String] = None, customerAddressTwo: Option[String] = None, customerAddressCity: Option[String] = None, customerAddressState: Option[String] = None, customerAddressPostal: Option[String] = None, customerAddressCountry: Option[String] = None, customerLongitude: Option[Float] = None, customerLatitude: Option[Float] = None, menuName: Option[String] = None, menuId: Option[String] = None, minimumOrder: Option[Float] = Some(0.0F), `type`: Option[Int] = Some(0), intervalInMinutes: Option[Int] = Some(0), submittedOn: Option[java.sql.Timestamp] = None, paymentReference: Option[String] = None, billingAddress: Option[String] = None, billingAddressOne: Option[String] = None, billingAddressTwo: Option[String] = None, billingAddressCity: Option[String] = None, billingAddressState: Option[String] = None, billingAddressPostal: Option[String] = None, billingAddressCountry: Option[String] = None, organisationName: Option[String] = None, gmtOffset: Option[Float] = None, totalAmount: Option[Float] = None, referrerUrl: Option[String] = None, deliveryFreeAfter: Option[Float] = Some(0.0F), locationDeliveryCost: Option[Float] = Some(0.0F), promotionCode: Option[String] = None, minimumOrderDefault: Option[Float] = Some(0.0F), invoiceReference: Option[String] = None, locale: Option[String] = Some("en_SG"), currencyCode: Option[String] = Some("SGD"), defaultStoreId: Option[String] = None, locationId: Option[String] = None, timeOptionId: Option[String] = None, timeOptionLeadTime: Option[Int] = None, paymentOptionId: Option[String] = None, recipientName: Option[String] = None, recipientContact: Option[String] = None, paymentProcessReference: Option[String] = None, roundingAdjustment: Option[Float] = Some(0.0F), deliveryRequestId: Option[String] = None): StoreOrderRow = {
+  def StoreOrderRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, customerId: Option[String] = None, storeId: Option[String] = None, pickup: Option[Int] = None, customerRemark: Option[String] = None, kitchenRemark: Option[String] = None, deliveryCost: Option[Float] = None, status: Option[Int] = None, paymentType: Option[Int] = None, deliveryDate: Option[DateTime] = None, paymentDueDate: Option[DateTime] = None, orderNumber: Option[String] = None, paymentStatus: Option[Int] = None, customerAddress: Option[String] = None, customerAddressOne: Option[String] = None, customerAddressTwo: Option[String] = None, customerAddressCity: Option[String] = None, customerAddressState: Option[String] = None, customerAddressPostal: Option[String] = None, customerAddressCountry: Option[String] = None, customerLongitude: Option[Float] = None, customerLatitude: Option[Float] = None, menuName: Option[String] = None, menuId: Option[String] = None, minimumOrder: Option[Float] = Some(0.0F), `type`: Option[Int] = Some(0), intervalInMinutes: Option[Int] = Some(0), submittedOn: Option[DateTime] = None, paymentReference: Option[String] = None, billingAddress: Option[String] = None, billingAddressOne: Option[String] = None, billingAddressTwo: Option[String] = None, billingAddressCity: Option[String] = None, billingAddressState: Option[String] = None, billingAddressPostal: Option[String] = None, billingAddressCountry: Option[String] = None, organisationName: Option[String] = None, gmtOffset: Option[Float] = None, totalAmount: Option[Float] = None, referrerUrl: Option[String] = None, deliveryFreeAfter: Option[Float] = Some(0.0F), locationDeliveryCost: Option[Float] = Some(0.0F), promotionCode: Option[String] = None, minimumOrderDefault: Option[Float] = Some(0.0F), invoiceReference: Option[String] = None, locale: Option[String] = Some("en_SG"), currencyCode: Option[String] = Some("SGD"), defaultStoreId: Option[String] = None, locationId: Option[String] = None, timeOptionId: Option[String] = None, timeOptionLeadTime: Option[Int] = None, paymentOptionId: Option[String] = None, recipientName: Option[String] = None, recipientContact: Option[String] = None, paymentProcessReference: Option[String] = None, roundingAdjustment: Option[Float] = Some(0.0F), deliveryRequestId: Option[String] = None): StoreOrderRow = {
     id :: version :: createdBy :: updatedBy :: createdOn :: updatedOn :: customerId :: storeId :: pickup :: customerRemark :: kitchenRemark :: deliveryCost :: status :: paymentType :: deliveryDate :: paymentDueDate :: orderNumber :: paymentStatus :: customerAddress :: customerAddressOne :: customerAddressTwo :: customerAddressCity :: customerAddressState :: customerAddressPostal :: customerAddressCountry :: customerLongitude :: customerLatitude :: menuName :: menuId :: minimumOrder :: `type` :: intervalInMinutes :: submittedOn :: paymentReference :: billingAddress :: billingAddressOne :: billingAddressTwo :: billingAddressCity :: billingAddressState :: billingAddressPostal :: billingAddressCountry :: organisationName :: gmtOffset :: totalAmount :: referrerUrl :: deliveryFreeAfter :: locationDeliveryCost :: promotionCode :: minimumOrderDefault :: invoiceReference :: locale :: currencyCode :: defaultStoreId :: locationId :: timeOptionId :: timeOptionLeadTime :: paymentOptionId :: recipientName :: recipientContact :: paymentProcessReference :: roundingAdjustment :: deliveryRequestId :: HNil
   }
   /** GetResult implicit for fetching StoreOrderRow objects using plain SQL queries */
-  implicit def GetResultStoreOrderRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[StoreOrderRow] = GR{
+  implicit def GetResultStoreOrderRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[StoreOrderRow] = GR{
     prs => import prs._
-    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[java.sql.Timestamp] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[String] :: HNil
+    <<[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[DateTime] :: <<?[DateTime] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[DateTime] :: <<?[DateTime] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Int] :: <<?[Int] :: <<?[DateTime] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[Float] :: <<?[Float] :: <<?[String] :: <<?[Float] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Int] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[Float] :: <<?[String] :: HNil
   }
   /** Table description of table store_order. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
@@ -3348,9 +3348,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column customer_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val customerId: Rep[Option[String]] = column[Option[String]]("customer_id", O.Length(32,varying=true), O.Default(None))
     /** Database column store_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -3368,9 +3368,9 @@ trait Tables {
     /** Database column payment_type SqlType(INT), Default(None) */
     val paymentType: Rep[Option[Int]] = column[Option[Int]]("payment_type", O.Default(None))
     /** Database column delivery_date SqlType(DATETIME), Default(None) */
-    val deliveryDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("delivery_date", O.Default(None))
+    val deliveryDate: Rep[Option[DateTime]] = column[Option[DateTime]]("delivery_date", O.Default(None))
     /** Database column payment_due_date SqlType(DATETIME), Default(None) */
-    val paymentDueDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("payment_due_date", O.Default(None))
+    val paymentDueDate: Rep[Option[DateTime]] = column[Option[DateTime]]("payment_due_date", O.Default(None))
     /** Database column order_number SqlType(VARCHAR), Length(32,true), Default(None) */
     val orderNumber: Rep[Option[String]] = column[Option[String]]("order_number", O.Length(32,varying=true), O.Default(None))
     /** Database column payment_status SqlType(INT), Default(None) */
@@ -3405,7 +3405,7 @@ trait Tables {
     /** Database column interval_in_minutes SqlType(INT), Default(Some(0)) */
     val intervalInMinutes: Rep[Option[Int]] = column[Option[Int]]("interval_in_minutes", O.Default(Some(0)))
     /** Database column submitted_on SqlType(DATETIME), Default(None) */
-    val submittedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("submitted_on", O.Default(None))
+    val submittedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("submitted_on", O.Default(None))
     /** Database column payment_reference SqlType(VARCHAR), Length(255,true), Default(None) */
     val paymentReference: Rep[Option[String]] = column[Option[String]]("payment_reference", O.Length(255,varying=true), O.Default(None))
     /** Database column billing_address SqlType(TEXT), Default(None) */
@@ -3484,11 +3484,11 @@ trait Tables {
    *  @param updatedBy Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param log Database column log SqlType(TEXT), Default(None)
    *  @param storeOrderId Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class StoreOrderLogRow(id: String, version: Option[Int] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, log: Option[String] = None, storeOrderId: Option[String] = None)
+  case class StoreOrderLogRow(id: String, version: Option[Int] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, log: Option[String] = None, storeOrderId: Option[String] = None)
   /** GetResult implicit for fetching StoreOrderLogRow objects using plain SQL queries */
-  implicit def GetResultStoreOrderLogRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Option[String]]): GR[StoreOrderLogRow] = GR{
+  implicit def GetResultStoreOrderLogRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[DateTime]], e3: GR[Option[String]]): GR[StoreOrderLogRow] = GR{
     prs => import prs._
-    StoreOrderLogRow.tupled((<<[String], <<?[Int], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String]))
+    StoreOrderLogRow.tupled((<<[String], <<?[Int], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table store_order_log. Objects of this class serve as prototypes for rows in queries. */
   class StoreOrderLog(_tableTag: Tag) extends Table[StoreOrderLogRow](_tableTag, "store_order_log") {
@@ -3501,9 +3501,9 @@ trait Tables {
     /** Database column version SqlType(INT), Default(None) */
     val version: Rep[Option[Int]] = column[Option[Int]]("version", O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -3537,11 +3537,11 @@ trait Tables {
    *  @param storeOrderTotalAmount Database column store_order_total_amount SqlType(FLOAT), Default(None)
    *  @param failureMessage Database column failure_message SqlType(TEXT), Default(None)
    *  @param secondaryPaymentDetails Database column secondary_payment_details SqlType(TEXT), Default(None) */
-  case class StoreOrderPaymentDetailsRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, storeOrderId: Option[String] = None, paymentStatus: Option[Int] = None, paymentOptionId: Option[String] = None, paymentProcessReference: Option[String] = None, paymentReference: Option[String] = None, oddleApplicationFee: Option[Float] = None, paymentGatewayFee: Option[Float] = None, paymentRateHistoryId: Option[String] = None, storeOrderTotalAmount: Option[Float] = None, failureMessage: Option[String] = None, secondaryPaymentDetails: Option[String] = None)
+  case class StoreOrderPaymentDetailsRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, storeOrderId: Option[String] = None, paymentStatus: Option[Int] = None, paymentOptionId: Option[String] = None, paymentProcessReference: Option[String] = None, paymentReference: Option[String] = None, oddleApplicationFee: Option[Float] = None, paymentGatewayFee: Option[Float] = None, paymentRateHistoryId: Option[String] = None, storeOrderTotalAmount: Option[Float] = None, failureMessage: Option[String] = None, secondaryPaymentDetails: Option[String] = None)
   /** GetResult implicit for fetching StoreOrderPaymentDetailsRow objects using plain SQL queries */
-  implicit def GetResultStoreOrderPaymentDetailsRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[StoreOrderPaymentDetailsRow] = GR{
+  implicit def GetResultStoreOrderPaymentDetailsRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[StoreOrderPaymentDetailsRow] = GR{
     prs => import prs._
-    StoreOrderPaymentDetailsRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[String], <<?[Float], <<?[String], <<?[String]))
+    StoreOrderPaymentDetailsRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[String], <<?[Float], <<?[String], <<?[String]))
   }
   /** Table description of table store_order_payment_details. Objects of this class serve as prototypes for rows in queries. */
   class StoreOrderPaymentDetails(_tableTag: Tag) extends Table[StoreOrderPaymentDetailsRow](_tableTag, "store_order_payment_details") {
@@ -3558,9 +3558,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val storeOrderId: Rep[Option[String]] = column[Option[String]]("store_order_id", O.Length(32,varying=true), O.Default(None))
     /** Database column payment_status SqlType(INT), Default(None) */
@@ -3610,11 +3610,11 @@ trait Tables {
    *  @param storeOrderTotalAmount Database column store_order_total_amount SqlType(FLOAT), Default(None)
    *  @param failureMessage Database column failure_message SqlType(TEXT), Default(None)
    *  @param secondaryPaymentDetails Database column secondary_payment_details SqlType(TEXT), Default(None) */
-  case class StoreOrderPaymentDetailsHistoryRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, storeOrderId: Option[String] = None, paymentStatus: Option[Int] = None, paymentOptionId: Option[String] = None, paymentProcessReference: Option[String] = None, paymentReference: Option[String] = None, oddleApplicationFee: Option[Float] = None, paymentGatewayFee: Option[Float] = None, paymentRateHistoryId: Option[String] = None, storeOrderTotalAmount: Option[Float] = None, failureMessage: Option[String] = None, secondaryPaymentDetails: Option[String] = None)
+  case class StoreOrderPaymentDetailsHistoryRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, storeOrderId: Option[String] = None, paymentStatus: Option[Int] = None, paymentOptionId: Option[String] = None, paymentProcessReference: Option[String] = None, paymentReference: Option[String] = None, oddleApplicationFee: Option[Float] = None, paymentGatewayFee: Option[Float] = None, paymentRateHistoryId: Option[String] = None, storeOrderTotalAmount: Option[Float] = None, failureMessage: Option[String] = None, secondaryPaymentDetails: Option[String] = None)
   /** GetResult implicit for fetching StoreOrderPaymentDetailsHistoryRow objects using plain SQL queries */
-  implicit def GetResultStoreOrderPaymentDetailsHistoryRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[StoreOrderPaymentDetailsHistoryRow] = GR{
+  implicit def GetResultStoreOrderPaymentDetailsHistoryRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[StoreOrderPaymentDetailsHistoryRow] = GR{
     prs => import prs._
-    StoreOrderPaymentDetailsHistoryRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[String], <<?[Float], <<?[String], <<?[String]))
+    StoreOrderPaymentDetailsHistoryRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Float], <<?[String], <<?[Float], <<?[String], <<?[String]))
   }
   /** Table description of table store_order_payment_details_history. Objects of this class serve as prototypes for rows in queries. */
   class StoreOrderPaymentDetailsHistory(_tableTag: Tag) extends Table[StoreOrderPaymentDetailsHistoryRow](_tableTag, "store_order_payment_details_history") {
@@ -3631,9 +3631,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val storeOrderId: Rep[Option[String]] = column[Option[String]]("store_order_id", O.Length(32,varying=true), O.Default(None))
     /** Database column payment_status SqlType(INT), Default(None) */
@@ -3670,11 +3670,11 @@ trait Tables {
    *  @param storeId Database column store_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param variantId Database column variant_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param outOfStock Database column out_of_stock SqlType(INT), Default(None) */
-  case class StoreVariantRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, storeId: Option[String] = None, variantId: Option[String] = None, outOfStock: Option[Int] = None)
+  case class StoreVariantRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, storeId: Option[String] = None, variantId: Option[String] = None, outOfStock: Option[Int] = None)
   /** GetResult implicit for fetching StoreVariantRow objects using plain SQL queries */
-  implicit def GetResultStoreVariantRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[StoreVariantRow] = GR{
+  implicit def GetResultStoreVariantRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[StoreVariantRow] = GR{
     prs => import prs._
-    StoreVariantRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int]))
+    StoreVariantRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int]))
   }
   /** Table description of table store_variant. Objects of this class serve as prototypes for rows in queries. */
   class StoreVariant(_tableTag: Tag) extends Table[StoreVariantRow](_tableTag, "store_variant") {
@@ -3691,9 +3691,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column store_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val storeId: Rep[Option[String]] = column[Option[String]]("store_id", O.Length(32,varying=true), O.Default(None))
     /** Database column variant_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -3724,11 +3724,11 @@ trait Tables {
    *  @param description Database column description SqlType(TEXT), Default(None)
    *  @param menuId Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param selectableOnce Database column selectable_once SqlType(INT), Default(Some(0)) */
-  case class SubitemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, displayPosition: Option[Int] = None, displayToPublic: Option[Int] = None, minimumQuantity: Option[Int] = None, maximumQuantity: Option[Int] = None, defaultSubitemVariantId: Option[String] = None, description: Option[String] = None, menuId: Option[String] = None, selectableOnce: Option[Int] = Some(0))
+  case class SubitemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, displayPosition: Option[Int] = None, displayToPublic: Option[Int] = None, minimumQuantity: Option[Int] = None, maximumQuantity: Option[Int] = None, defaultSubitemVariantId: Option[String] = None, description: Option[String] = None, menuId: Option[String] = None, selectableOnce: Option[Int] = Some(0))
   /** GetResult implicit for fetching SubitemRow objects using plain SQL queries */
-  implicit def GetResultSubitemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[SubitemRow] = GR{
+  implicit def GetResultSubitemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[SubitemRow] = GR{
     prs => import prs._
-    SubitemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Int]))
+    SubitemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Int]))
   }
   /** Table description of table subitem. Objects of this class serve as prototypes for rows in queries. */
   class Subitem(_tableTag: Tag) extends Table[SubitemRow](_tableTag, "subitem") {
@@ -3745,9 +3745,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column display_position SqlType(INT), Default(None) */
     val displayPosition: Rep[Option[Int]] = column[Option[Int]]("display_position", O.Default(None))
     /** Database column display_to_public SqlType(INT), Default(None) */
@@ -3786,11 +3786,11 @@ trait Tables {
    *  @param priceUnderMinimumSelection Database column price_under_minimum_selection SqlType(FLOAT), Default(None)
    *  @param preselect Database column preselect SqlType(INT), Default(Some(0))
    *  @param displayPosition Database column display_position SqlType(INT), Default(Some(0)) */
-  case class SubitemVariantRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, variantId: Option[String] = None, subitemId: Option[String] = None, priceUnderMinimumSelection: Option[Float] = None, preselect: Option[Int] = Some(0), displayPosition: Option[Int] = Some(0))
+  case class SubitemVariantRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, variantId: Option[String] = None, subitemId: Option[String] = None, priceUnderMinimumSelection: Option[Float] = None, preselect: Option[Int] = Some(0), displayPosition: Option[Int] = Some(0))
   /** GetResult implicit for fetching SubitemVariantRow objects using plain SQL queries */
-  implicit def GetResultSubitemVariantRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[SubitemVariantRow] = GR{
+  implicit def GetResultSubitemVariantRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[SubitemVariantRow] = GR{
     prs => import prs._
-    SubitemVariantRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Float], <<?[Int], <<?[Int]))
+    SubitemVariantRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Float], <<?[Int], <<?[Int]))
   }
   /** Table description of table subitem_variant. Objects of this class serve as prototypes for rows in queries. */
   class SubitemVariant(_tableTag: Tag) extends Table[SubitemVariantRow](_tableTag, "subitem_variant") {
@@ -3807,9 +3807,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column variant_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val variantId: Rep[Option[String]] = column[Option[String]]("variant_id", O.Length(32,varying=true), O.Default(None))
     /** Database column subitem_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -3847,11 +3847,11 @@ trait Tables {
    *  @param applyToDelivery Database column apply_to_delivery SqlType(INT), Default(None)
    *  @param taxOrder Database column tax_order SqlType(INT), Default(Some(0))
    *  @param beforeDeliveryCharges Database column before_delivery_charges SqlType(INT), Default(None) */
-  case class TaxAndChargeRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, amount: Option[Float] = None, applyTo: Option[Int] = None, `type`: Option[Int] = None, description: Option[String] = None, inclusive: Option[Int] = None, external: Option[Int] = None, menuId: Option[String] = None, dpType: Option[Int] = None, applyToDelivery: Option[Int] = None, taxOrder: Option[Int] = Some(0), beforeDeliveryCharges: Option[Int] = None)
+  case class TaxAndChargeRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, amount: Option[Float] = None, applyTo: Option[Int] = None, `type`: Option[Int] = None, description: Option[String] = None, inclusive: Option[Int] = None, external: Option[Int] = None, menuId: Option[String] = None, dpType: Option[Int] = None, applyToDelivery: Option[Int] = None, taxOrder: Option[Int] = Some(0), beforeDeliveryCharges: Option[Int] = None)
   /** GetResult implicit for fetching TaxAndChargeRow objects using plain SQL queries */
-  implicit def GetResultTaxAndChargeRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[TaxAndChargeRow] = GR{
+  implicit def GetResultTaxAndChargeRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[TaxAndChargeRow] = GR{
     prs => import prs._
-    TaxAndChargeRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Float], <<?[Int], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[Int]))
+    TaxAndChargeRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Float], <<?[Int], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[Int]))
   }
   /** Table description of table tax_and_charge. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
@@ -3869,9 +3869,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column amount SqlType(FLOAT), Default(None) */
     val amount: Rep[Option[Float]] = column[Option[Float]]("amount", O.Default(None))
     /** Database column apply_to SqlType(INT), Default(None) */
@@ -3916,11 +3916,11 @@ trait Tables {
    *  @param value Database column value SqlType(FLOAT), Default(None)
    *  @param currencyCode Database column currency_code SqlType(VARCHAR), Length(10,true), Default(None)
    *  @param extraField Database column extra_field SqlType(VARCHAR), Length(45,true), Default(None) */
-  case class ThirdPartyTrackerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, menuId: Option[String] = None, trackerId: Option[String] = None, webpageType: Option[Int] = None, trackerType: Option[Int] = None, value: Option[Float] = None, currencyCode: Option[String] = None, extraField: Option[String] = None)
+  case class ThirdPartyTrackerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, menuId: Option[String] = None, trackerId: Option[String] = None, webpageType: Option[Int] = None, trackerType: Option[Int] = None, value: Option[Float] = None, currencyCode: Option[String] = None, extraField: Option[String] = None)
   /** GetResult implicit for fetching ThirdPartyTrackerRow objects using plain SQL queries */
-  implicit def GetResultThirdPartyTrackerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[ThirdPartyTrackerRow] = GR{
+  implicit def GetResultThirdPartyTrackerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[ThirdPartyTrackerRow] = GR{
     prs => import prs._
-    ThirdPartyTrackerRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Float], <<?[String], <<?[String]))
+    ThirdPartyTrackerRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Float], <<?[String], <<?[String]))
   }
   /** Table description of table third_party_tracker. Objects of this class serve as prototypes for rows in queries. */
   class ThirdPartyTracker(_tableTag: Tag) extends Table[ThirdPartyTrackerRow](_tableTag, "third_party_tracker") {
@@ -3937,9 +3937,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column menu_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val menuId: Rep[Option[String]] = column[Option[String]]("menu_id", O.Length(32,varying=true), O.Default(None))
     /** Database column tracker_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -3980,11 +3980,11 @@ trait Tables {
    *  @param leadTime Database column lead_time SqlType(INT), Default(Some(0))
    *  @param startDate Database column start_date SqlType(DATETIME), Default(None)
    *  @param endDate Database column end_date SqlType(DATETIME), Default(None) */
-  case class TimeOptionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, storeId: Option[String] = None, startTime: Option[java.sql.Time] = None, endTime: Option[java.sql.Time] = None, cutoffTime: Option[java.sql.Time] = None, dayInWeek: Option[String] = None, quota: Option[Int] = None, intervalInMinutes: Option[Int] = None, isSpecial: Option[Int] = None, `type`: Option[Int] = None, leadTime: Option[Int] = Some(0), startDate: Option[java.sql.Timestamp] = None, endDate: Option[java.sql.Timestamp] = None)
+  case class TimeOptionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, storeId: Option[String] = None, startTime: Option[java.sql.Time] = None, endTime: Option[java.sql.Time] = None, cutoffTime: Option[java.sql.Time] = None, dayInWeek: Option[String] = None, quota: Option[Int] = None, intervalInMinutes: Option[Int] = None, isSpecial: Option[Int] = None, `type`: Option[Int] = None, leadTime: Option[Int] = Some(0), startDate: Option[DateTime] = None, endDate: Option[DateTime] = None)
   /** GetResult implicit for fetching TimeOptionRow objects using plain SQL queries */
-  implicit def GetResultTimeOptionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[java.sql.Time]]): GR[TimeOptionRow] = GR{
+  implicit def GetResultTimeOptionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[java.sql.Time]]): GR[TimeOptionRow] = GR{
     prs => import prs._
-    TimeOptionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[java.sql.Time], <<?[java.sql.Time], <<?[java.sql.Time], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp]))
+    TimeOptionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[java.sql.Time], <<?[java.sql.Time], <<?[java.sql.Time], <<?[String], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[Int], <<?[DateTime], <<?[DateTime]))
   }
   /** Table description of table time_option. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
@@ -4002,9 +4002,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column store_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val storeId: Rep[Option[String]] = column[Option[String]]("store_id", O.Length(32,varying=true), O.Default(None))
     /** Database column start_time SqlType(TIME), Default(None) */
@@ -4027,9 +4027,9 @@ trait Tables {
     /** Database column lead_time SqlType(INT), Default(Some(0)) */
     val leadTime: Rep[Option[Int]] = column[Option[Int]]("lead_time", O.Default(Some(0)))
     /** Database column start_date SqlType(DATETIME), Default(None) */
-    val startDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("start_date", O.Default(None))
+    val startDate: Rep[Option[DateTime]] = column[Option[DateTime]]("start_date", O.Default(None))
     /** Database column end_date SqlType(DATETIME), Default(None) */
-    val endDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("end_date", O.Default(None))
+    val endDate: Rep[Option[DateTime]] = column[Option[DateTime]]("end_date", O.Default(None))
 
     /** Foreign key referencing Store (database name fk_time_option_1) */
     lazy val storeFk = foreignKey("fk_time_option_1", storeId, Store)(r => Rep.Some(r.id), onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -4048,11 +4048,11 @@ trait Tables {
    *  @param orderDeliveryDateTime Database column order_delivery_date_time SqlType(TIMESTAMP), Default(None)
    *  @param isPickup Database column is_pickup SqlType(INT), Default(None)
    *  @param storeOrderId Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class TimeOptionBookingRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, storeId: Option[String] = None, orderDeliveryDateTime: Option[java.sql.Timestamp] = None, isPickup: Option[Int] = None, storeOrderId: Option[String] = None)
+  case class TimeOptionBookingRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, storeId: Option[String] = None, orderDeliveryDateTime: Option[DateTime] = None, isPickup: Option[Int] = None, storeOrderId: Option[String] = None)
   /** GetResult implicit for fetching TimeOptionBookingRow objects using plain SQL queries */
-  implicit def GetResultTimeOptionBookingRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[TimeOptionBookingRow] = GR{
+  implicit def GetResultTimeOptionBookingRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[TimeOptionBookingRow] = GR{
     prs => import prs._
-    TimeOptionBookingRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[java.sql.Timestamp], <<?[Int], <<?[String]))
+    TimeOptionBookingRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[DateTime], <<?[Int], <<?[String]))
   }
   /** Table description of table time_option_booking. Objects of this class serve as prototypes for rows in queries. */
   class TimeOptionBooking(_tableTag: Tag) extends Table[TimeOptionBookingRow](_tableTag, "time_option_booking") {
@@ -4069,13 +4069,13 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column store_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val storeId: Rep[Option[String]] = column[Option[String]]("store_id", O.Length(32,varying=true), O.Default(None))
     /** Database column order_delivery_date_time SqlType(TIMESTAMP), Default(None) */
-    val orderDeliveryDateTime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("order_delivery_date_time", O.Default(None))
+    val orderDeliveryDateTime: Rep[Option[DateTime]] = column[Option[DateTime]]("order_delivery_date_time", O.Default(None))
     /** Database column is_pickup SqlType(INT), Default(None) */
     val isPickup: Rep[Option[Int]] = column[Option[Int]]("is_pickup", O.Default(None))
     /** Database column store_order_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -4105,11 +4105,11 @@ trait Tables {
    *  @param accountId Database column account_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param accessType Database column access_type SqlType(INT), Default(None)
    *  @param menuIds Database column menu_ids SqlType(TEXT), Default(None) */
-  case class TokenRow(id: String, version: Int, createdBy: String, updatedBy: Option[String] = None, createdOn: java.sql.Timestamp, updatedOn: Option[java.sql.Timestamp] = None, accessKey: Option[String] = None, isEnabled: Option[Int] = None, urlAddress: Option[String] = None, accountId: Option[String] = None, accessType: Option[Int] = None, menuIds: Option[String] = None)
+  case class TokenRow(id: String, version: Int, createdBy: String, updatedBy: Option[String] = None, createdOn: DateTime, updatedOn: Option[DateTime] = None, accessKey: Option[String] = None, isEnabled: Option[Int] = None, urlAddress: Option[String] = None, accountId: Option[String] = None, accessType: Option[Int] = None, menuIds: Option[String] = None)
   /** GetResult implicit for fetching TokenRow objects using plain SQL queries */
-  implicit def GetResultTokenRow(implicit e0: GR[String], e1: GR[Int], e2: GR[Option[String]], e3: GR[java.sql.Timestamp], e4: GR[Option[java.sql.Timestamp]], e5: GR[Option[Int]]): GR[TokenRow] = GR{
+  implicit def GetResultTokenRow(implicit e0: GR[String], e1: GR[Int], e2: GR[Option[String]], e3: GR[DateTime], e4: GR[Option[DateTime]], e5: GR[Option[Int]]): GR[TokenRow] = GR{
     prs => import prs._
-    TokenRow.tupled((<<[String], <<[Int], <<[String], <<?[String], <<[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[Int], <<?[String]))
+    TokenRow.tupled((<<[String], <<[Int], <<[String], <<?[String], <<[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[Int], <<?[String]))
   }
   /** Table description of table token. Objects of this class serve as prototypes for rows in queries. */
   class Token(_tableTag: Tag) extends Table[TokenRow](_tableTag, "token") {
@@ -4126,9 +4126,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME) */
-    val createdOn: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("created_on")
+    val createdOn: Rep[DateTime] = column[DateTime]("created_on")
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column access_key SqlType(VARCHAR), Length(40,true), Default(None) */
     val accessKey: Rep[Option[String]] = column[Option[String]]("access_key", O.Length(40,varying=true), O.Default(None))
     /** Database column is_enabled SqlType(INT), Default(None) */
@@ -4163,11 +4163,11 @@ trait Tables {
    *  @param hits Database column hits SqlType(INT), Default(None)
    *  @param isNew Database column is_new SqlType(INT), Default(None)
    *  @param shortTrafficSource Database column short_traffic_source SqlType(TEXT), Default(None) */
-  case class TrackerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, ip: Option[String] = None, url: Option[String] = None, trafficSource: Option[String] = None, country: Option[String] = None, duration: Option[Int] = None, browser: Option[String] = None, menuId: Option[String] = None, visitorId: Option[String] = None, hits: Option[Int] = None, isNew: Option[Int] = None, shortTrafficSource: Option[String] = None)
+  case class TrackerRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, ip: Option[String] = None, url: Option[String] = None, trafficSource: Option[String] = None, country: Option[String] = None, duration: Option[Int] = None, browser: Option[String] = None, menuId: Option[String] = None, visitorId: Option[String] = None, hits: Option[Int] = None, isNew: Option[Int] = None, shortTrafficSource: Option[String] = None)
   /** GetResult implicit for fetching TrackerRow objects using plain SQL queries */
-  implicit def GetResultTrackerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[TrackerRow] = GR{
+  implicit def GetResultTrackerRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[TrackerRow] = GR{
     prs => import prs._
-    TrackerRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[String]))
+    TrackerRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[String]))
   }
   /** Table description of table tracker. Objects of this class serve as prototypes for rows in queries. */
   class Tracker(_tableTag: Tag) extends Table[TrackerRow](_tableTag, "tracker") {
@@ -4184,9 +4184,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column ip SqlType(VARCHAR), Length(255,true), Default(None) */
     val ip: Rep[Option[String]] = column[Option[String]]("ip", O.Length(255,varying=true), O.Default(None))
     /** Database column url SqlType(VARCHAR), Length(255,true), Default(None) */
@@ -4239,11 +4239,11 @@ trait Tables {
    *  @param deliveryAdminSms Database column delivery_admin_sms SqlType(INT), Default(None)
    *  @param deliveryAdminEmail Database column delivery_admin_email SqlType(INT), Default(None)
    *  @param preferredDisplayLanguage Database column preferred_display_language SqlType(VARCHAR), Length(10,true), Default(None) */
-  case class UserRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, owner: Option[Int] = None, email: Option[String] = None, password: Option[String] = None, phone: Option[String] = None, firstName: Option[String] = None, lastName: Option[String] = None, resetPasswordKey: Option[String] = None, receiveNotification: Option[Int] = None, resetPasswordExpiryDate: Option[java.sql.Timestamp] = None, accountId: Option[String] = None, apiKey: Option[String] = None, iosDeviceToken: Option[String] = None, deliveryAdminNotificationSelectedCountry: Option[String] = None, deliveryAdminSms: Option[Int] = None, deliveryAdminEmail: Option[Int] = None, preferredDisplayLanguage: Option[String] = None)
+  case class UserRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, owner: Option[Int] = None, email: Option[String] = None, password: Option[String] = None, phone: Option[String] = None, firstName: Option[String] = None, lastName: Option[String] = None, resetPasswordKey: Option[String] = None, receiveNotification: Option[Int] = None, resetPasswordExpiryDate: Option[DateTime] = None, accountId: Option[String] = None, apiKey: Option[String] = None, iosDeviceToken: Option[String] = None, deliveryAdminNotificationSelectedCountry: Option[String] = None, deliveryAdminSms: Option[Int] = None, deliveryAdminEmail: Option[Int] = None, preferredDisplayLanguage: Option[String] = None)
   /** GetResult implicit for fetching UserRow objects using plain SQL queries */
-  implicit def GetResultUserRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[UserRow] = GR{
+  implicit def GetResultUserRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[UserRow] = GR{
     prs => import prs._
-    UserRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[String]))
+    UserRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[Int], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[String]))
   }
   /** Table description of table user. Objects of this class serve as prototypes for rows in queries. */
   class User(_tableTag: Tag) extends Table[UserRow](_tableTag, "user") {
@@ -4260,9 +4260,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column owner SqlType(INT), Default(None) */
     val owner: Rep[Option[Int]] = column[Option[Int]]("owner", O.Default(None))
     /** Database column email SqlType(VARCHAR), Length(255,true), Default(None) */
@@ -4280,7 +4280,7 @@ trait Tables {
     /** Database column receive_notification SqlType(INT), Default(None) */
     val receiveNotification: Rep[Option[Int]] = column[Option[Int]]("receive_notification", O.Default(None))
     /** Database column reset_password_expiry_date SqlType(DATETIME), Default(None) */
-    val resetPasswordExpiryDate: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("reset_password_expiry_date", O.Default(None))
+    val resetPasswordExpiryDate: Rep[Option[DateTime]] = column[Option[DateTime]]("reset_password_expiry_date", O.Default(None))
     /** Database column account_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val accountId: Rep[Option[String]] = column[Option[String]]("account_id", O.Length(32,varying=true), O.Default(None))
     /** Database column api_key SqlType(VARCHAR), Length(255,true), Default(None) */
@@ -4314,11 +4314,11 @@ trait Tables {
    *  @param sms Database column sms SqlType(INT), Default(None)
    *  @param email Database column email SqlType(INT), Default(None)
    *  @param fax Database column fax SqlType(INT), Default(None) */
-  case class UserNotificationRow(id: String, version: Option[Int] = None, createdOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, updatedOn: Option[java.sql.Timestamp] = None, notificationTemplateId: Option[String] = None, userId: Option[String] = None, sms: Option[Int] = None, email: Option[Int] = None, fax: Option[Int] = None)
+  case class UserNotificationRow(id: String, version: Option[Int] = None, createdOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, updatedOn: Option[DateTime] = None, notificationTemplateId: Option[String] = None, userId: Option[String] = None, sms: Option[Int] = None, email: Option[Int] = None, fax: Option[Int] = None)
   /** GetResult implicit for fetching UserNotificationRow objects using plain SQL queries */
-  implicit def GetResultUserNotificationRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Option[String]]): GR[UserNotificationRow] = GR{
+  implicit def GetResultUserNotificationRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[DateTime]], e3: GR[Option[String]]): GR[UserNotificationRow] = GR{
     prs => import prs._
-    UserNotificationRow.tupled((<<[String], <<?[Int], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int]))
+    UserNotificationRow.tupled((<<[String], <<?[Int], <<?[DateTime], <<?[String], <<?[String], <<?[DateTime], <<?[String], <<?[String], <<?[Int], <<?[Int], <<?[Int]))
   }
   /** Table description of table user_notification. Objects of this class serve as prototypes for rows in queries. */
   class UserNotification(_tableTag: Tag) extends Table[UserNotificationRow](_tableTag, "user_notification") {
@@ -4331,13 +4331,13 @@ trait Tables {
     /** Database column version SqlType(INT), Default(None) */
     val version: Rep[Option[Int]] = column[Option[Int]]("version", O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column notification_template_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val notificationTemplateId: Rep[Option[String]] = column[Option[String]]("notification_template_id", O.Length(32,varying=true), O.Default(None))
     /** Database column user_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -4362,11 +4362,11 @@ trait Tables {
    *  @param userId Database column user_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param permissionId Database column permission_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param permissionFlag Database column permission_flag SqlType(INT), Default(Some(7)) */
-  case class UserPermissionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, userId: Option[String] = None, permissionId: Option[String] = None, permissionFlag: Option[Int] = Some(7))
+  case class UserPermissionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, userId: Option[String] = None, permissionId: Option[String] = None, permissionFlag: Option[Int] = Some(7))
   /** GetResult implicit for fetching UserPermissionRow objects using plain SQL queries */
-  implicit def GetResultUserPermissionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[UserPermissionRow] = GR{
+  implicit def GetResultUserPermissionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[UserPermissionRow] = GR{
     prs => import prs._
-    UserPermissionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int]))
+    UserPermissionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int]))
   }
   /** Table description of table user_permission. Objects of this class serve as prototypes for rows in queries. */
   class UserPermission(_tableTag: Tag) extends Table[UserPermissionRow](_tableTag, "user_permission") {
@@ -4383,9 +4383,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column user_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val userId: Rep[Option[String]] = column[Option[String]]("user_id", O.Length(32,varying=true), O.Default(None))
     /** Database column permission_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -4413,11 +4413,11 @@ trait Tables {
    *  @param updatedOn Database column updated_on SqlType(DATETIME), Default(None)
    *  @param userId Database column user_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param storeId Database column store_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class UserStoreRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, userId: Option[String] = None, storeId: Option[String] = None)
+  case class UserStoreRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, userId: Option[String] = None, storeId: Option[String] = None)
   /** GetResult implicit for fetching UserStoreRow objects using plain SQL queries */
-  implicit def GetResultUserStoreRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[UserStoreRow] = GR{
+  implicit def GetResultUserStoreRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[UserStoreRow] = GR{
     prs => import prs._
-    UserStoreRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String]))
+    UserStoreRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String]))
   }
   /** Table description of table user_store. Objects of this class serve as prototypes for rows in queries. */
   class UserStore(_tableTag: Tag) extends Table[UserStoreRow](_tableTag, "user_store") {
@@ -4434,9 +4434,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column user_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val userId: Rep[Option[String]] = column[Option[String]]("user_id", O.Length(32,varying=true), O.Default(None))
     /** Database column store_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -4465,11 +4465,11 @@ trait Tables {
    *  @param belongsToCompositeItem Database column belongs_to_composite_item SqlType(INT), Default(Some(0))
    *  @param variantName Database column variant_name SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param displayPosition Database column display_position SqlType(INT), Default(None) */
-  case class VariantRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, variant1: Option[String] = None, variant2: Option[String] = None, variant3: Option[String] = None, itemId: Option[String] = None, price: Option[Float] = None, belongsToCompositeItem: Option[Int] = Some(0), variantName: Option[String] = None, displayPosition: Option[Int] = None)
+  case class VariantRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, variant1: Option[String] = None, variant2: Option[String] = None, variant3: Option[String] = None, itemId: Option[String] = None, price: Option[Float] = None, belongsToCompositeItem: Option[Int] = Some(0), variantName: Option[String] = None, displayPosition: Option[Int] = None)
   /** GetResult implicit for fetching VariantRow objects using plain SQL queries */
-  implicit def GetResultVariantRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[Float]]): GR[VariantRow] = GR{
+  implicit def GetResultVariantRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]], e4: GR[Option[Float]]): GR[VariantRow] = GR{
     prs => import prs._
-    VariantRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Int], <<?[String], <<?[Int]))
+    VariantRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[String], <<?[String], <<?[Float], <<?[Int], <<?[String], <<?[Int]))
   }
   /** Table description of table variant. Objects of this class serve as prototypes for rows in queries. */
   class Variant(_tableTag: Tag) extends Table[VariantRow](_tableTag, "variant") {
@@ -4486,9 +4486,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column variant1 SqlType(TEXT), Default(None) */
     val variant1: Rep[Option[String]] = column[Option[String]]("variant1", O.Default(None))
     /** Database column variant2 SqlType(TEXT), Default(None) */
@@ -4522,11 +4522,11 @@ trait Tables {
    *  @param quantity Database column quantity SqlType(FLOAT), Default(None)
    *  @param ingredientId Database column ingredient_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param variantId Database column variant_id SqlType(VARCHAR), Length(32,true), Default(None) */
-  case class VariantIngredientRow(id: String, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, version: Option[Int] = None, quantity: Option[Float] = None, ingredientId: Option[String] = None, variantId: Option[String] = None)
+  case class VariantIngredientRow(id: String, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, version: Option[Int] = None, quantity: Option[Float] = None, ingredientId: Option[String] = None, variantId: Option[String] = None)
   /** GetResult implicit for fetching VariantIngredientRow objects using plain SQL queries */
-  implicit def GetResultVariantIngredientRow(implicit e0: GR[String], e1: GR[Option[java.sql.Timestamp]], e2: GR[Option[String]], e3: GR[Option[Int]], e4: GR[Option[Float]]): GR[VariantIngredientRow] = GR{
+  implicit def GetResultVariantIngredientRow(implicit e0: GR[String], e1: GR[Option[DateTime]], e2: GR[Option[String]], e3: GR[Option[Int]], e4: GR[Option[Float]]): GR[VariantIngredientRow] = GR{
     prs => import prs._
-    VariantIngredientRow.tupled((<<[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int], <<?[Float], <<?[String], <<?[String]))
+    VariantIngredientRow.tupled((<<[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int], <<?[Float], <<?[String], <<?[String]))
   }
   /** Table description of table variant_ingredient. Objects of this class serve as prototypes for rows in queries. */
   class VariantIngredient(_tableTag: Tag) extends Table[VariantIngredientRow](_tableTag, "variant_ingredient") {
@@ -4537,9 +4537,9 @@ trait Tables {
     /** Database column id SqlType(VARCHAR), PrimaryKey, Length(32,true) */
     val id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(32,varying=true))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column created_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val createdBy: Rep[Option[String]] = column[Option[String]]("created_by", O.Length(32,varying=true), O.Default(None))
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -4571,11 +4571,11 @@ trait Tables {
    *  @param variantId Database column variant_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param subitemId Database column subitem_id SqlType(VARCHAR), Length(32,true), Default(None)
    *  @param displayPosition Database column display_position SqlType(INT), Default(None) */
-  case class VariantSubitemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, variantId: Option[String] = None, subitemId: Option[String] = None, displayPosition: Option[Int] = None)
+  case class VariantSubitemRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, variantId: Option[String] = None, subitemId: Option[String] = None, displayPosition: Option[Int] = None)
   /** GetResult implicit for fetching VariantSubitemRow objects using plain SQL queries */
-  implicit def GetResultVariantSubitemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[VariantSubitemRow] = GR{
+  implicit def GetResultVariantSubitemRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[VariantSubitemRow] = GR{
     prs => import prs._
-    VariantSubitemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[Int]))
+    VariantSubitemRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[String], <<?[Int]))
   }
   /** Table description of table variant_subitem. Objects of this class serve as prototypes for rows in queries. */
   class VariantSubitem(_tableTag: Tag) extends Table[VariantSubitemRow](_tableTag, "variant_subitem") {
@@ -4592,9 +4592,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column variant_id SqlType(VARCHAR), Length(32,true), Default(None) */
     val variantId: Rep[Option[String]] = column[Option[String]]("variant_id", O.Length(32,varying=true), O.Default(None))
     /** Database column subitem_id SqlType(VARCHAR), Length(32,true), Default(None) */
@@ -4620,11 +4620,11 @@ trait Tables {
    *  @param versionNumber Database column version_number SqlType(VARCHAR), Length(45,true), Default(None)
    *  @param buildNumber Database column build_number SqlType(INT), Default(None)
    *  @param releaseNotes Database column release_notes SqlType(TEXT), Default(None) */
-  case class VersionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[java.sql.Timestamp] = None, updatedOn: Option[java.sql.Timestamp] = None, versionNumber: Option[String] = None, buildNumber: Option[Int] = None, releaseNotes: Option[String] = None)
+  case class VersionRow(id: String, version: Option[Int] = None, createdBy: Option[String] = None, updatedBy: Option[String] = None, createdOn: Option[DateTime] = None, updatedOn: Option[DateTime] = None, versionNumber: Option[String] = None, buildNumber: Option[Int] = None, releaseNotes: Option[String] = None)
   /** GetResult implicit for fetching VersionRow objects using plain SQL queries */
-  implicit def GetResultVersionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]]): GR[VersionRow] = GR{
+  implicit def GetResultVersionRow(implicit e0: GR[String], e1: GR[Option[Int]], e2: GR[Option[String]], e3: GR[Option[DateTime]]): GR[VersionRow] = GR{
     prs => import prs._
-    VersionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Int], <<?[String]))
+    VersionRow.tupled((<<[String], <<?[Int], <<?[String], <<?[String], <<?[DateTime], <<?[DateTime], <<?[String], <<?[Int], <<?[String]))
   }
   /** Table description of table version. Objects of this class serve as prototypes for rows in queries. */
   class Version(_tableTag: Tag) extends Table[VersionRow](_tableTag, "version") {
@@ -4641,9 +4641,9 @@ trait Tables {
     /** Database column updated_by SqlType(VARCHAR), Length(32,true), Default(None) */
     val updatedBy: Rep[Option[String]] = column[Option[String]]("updated_by", O.Length(32,varying=true), O.Default(None))
     /** Database column created_on SqlType(DATETIME), Default(None) */
-    val createdOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("created_on", O.Default(None))
+    val createdOn: Rep[Option[DateTime]] = column[Option[DateTime]]("created_on", O.Default(None))
     /** Database column updated_on SqlType(DATETIME), Default(None) */
-    val updatedOn: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("updated_on", O.Default(None))
+    val updatedOn: Rep[Option[DateTime]] = column[Option[DateTime]]("updated_on", O.Default(None))
     /** Database column version_number SqlType(VARCHAR), Length(45,true), Default(None) */
     val versionNumber: Rep[Option[String]] = column[Option[String]]("version_number", O.Length(45,varying=true), O.Default(None))
     /** Database column build_number SqlType(INT), Default(None) */
