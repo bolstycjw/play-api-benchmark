@@ -26,6 +26,7 @@
 
   <logger name="play" level="ERROR" />
   <logger name="application" level="ERROR" />
+  <logger name="akka.actor" level="INFO" />
   <logger name="slick.jdbc" level="ERROR"/>
 
   <!-- Off these ones as they are annoying, and anyway we manage configuration ourselves -->
