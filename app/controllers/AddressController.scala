@@ -5,7 +5,7 @@ import javax.inject._
 import controllers.json.AddressConverter
 import dtos.AddressDto
 import models.AddressRepository
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
 

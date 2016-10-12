@@ -1,6 +1,6 @@
 package dtos
 
-import models.database.{CategoryItemRow, ItemImageRow, ItemRow, VariantRow}
+import models.database.{ItemRow, VariantRow}
 
 case class ItemDto(
     itemRow: ItemRow,

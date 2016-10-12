@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import dtos._
 import models._
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.concurrent.Execution.Implicits._
 
 import scala.concurrent.Future
 

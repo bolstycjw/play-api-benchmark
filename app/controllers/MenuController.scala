@@ -3,7 +3,7 @@ package controllers
 import javax.inject._
 
 import controllers.json.MenuConverter
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.MenuService
