@@ -24,10 +24,10 @@
     <appender-ref ref="STDOUT" />
   </appender>
 
-  <logger name="play" level="ERROR" />
+  <logger name="play" level="INFO" />
   <logger name="application" level="ERROR" />
   <logger name="akka.actor" level="INFO" />
-  <logger name="slick.jdbc" level="ERROR"/>
+  <logger name="slick.jdbc" level="DEBUG"/>
 
   <!-- Off these ones as they are annoying, and anyway we manage configuration ourselves -->
   <logger name="com.avaje.ebean.config.PropertyMapLoader" level="OFF" />
